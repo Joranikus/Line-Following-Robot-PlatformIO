@@ -2,10 +2,11 @@
 // Created by oyste on 9/18/2023.
 //
 
+#include <Arduino.h>
 #include "DirectionClass.hpp"
 
 namespace dir {
-    DirectionClass::DirectionClass() {
+    DirectionClass::DirectionClass(int pins[5]) {
         /*Init a class to keep track of previous positions, and outputs ned position.*/
 
         for (int i = 0; i < 100; i++)
@@ -17,7 +18,8 @@ namespace dir {
     double DirectionClass::get_direction(int inPins[5]) {
 
         //Gets current direction from sensor, and updates the list of prev values.
-        double new_value = DirectionClass::this_direction(inPins);
+        DirectionClass::readSensorPins();
+        double new_value = DirectionClass::this_direction();
         DirectionClass::update_past_directions(new_value);
 
         //Calculates a new direction based on previous sensor inputs
@@ -58,9 +60,9 @@ namespace dir {
         return s;
     }
 
-    double DirectionClass::this_direction(int inPins[5]) {
+    double DirectionClass::this_direction() {
 
-        int as = arr_sum(inPins);
+        int as = arr_sum(outPins);
         if ((as == 0) or (as == 5)){return 0.0;}
 
         //Sets the upper and lower bound to the edges.
@@ -70,8 +72,8 @@ namespace dir {
         //Updates the upper and lower bound based on pin state.
         for (int i = 0; i < 5; i++)
         {
-            if ((i > maxIx) and inPins[i]){maxIx = i;}
-            if ((i < minIx) and inPins[i]){minIx = i;}
+            if ((i > maxIx) and outPins[i]){maxIx = i;}
+            if ((i < minIx) and outPins[i]){minIx = i;}
         }
 
         //Shifts the bounds from [0, 4] to [-2, 2]
@@ -81,6 +83,13 @@ namespace dir {
         //Returns the lower bound plus half the differende. (Returns the number in the middle of the bounds)
         double tmp = static_cast<double>(minIx) + (static_cast<double>(maxIx) - static_cast<double>(minIx)) / 2.0;
         return tmp;
+    }
+
+    void DirectionClass::readSensorPins() {
+        for (int i = 0; i < 5; i++)
+        {
+            outPins[i] = analogRead(sensorPins[i]) > sensorLimit;
+        }
     }
 
 } // dir

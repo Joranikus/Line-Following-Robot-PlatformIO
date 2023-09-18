@@ -12,7 +12,7 @@ int sensorPins[5] = {
         A4, // Sensor 5
 };
 
-dir::DirectionClass direction_class;
+dir::DirectionClass direction_class{sensorPins};
 
 int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 
