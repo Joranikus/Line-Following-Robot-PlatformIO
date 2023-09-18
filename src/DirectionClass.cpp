@@ -26,6 +26,7 @@ namespace dir {
             direction += DirectionClass::weighted(100, i, past_directions[i]);
         }
 
+        return direction;
     }
 
     double DirectionClass::weighted(int max, int ix, double value) {
