@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#include "DirectionClass.hpp"
+
 //SETUP
 
 int sensorPins[5] = {
@@ -9,6 +11,8 @@ int sensorPins[5] = {
         A3, // Sensor 4
         A4, // Sensor 5
 };
+
+dir::DirectionClass direction_class;
 
 int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 
@@ -147,7 +151,8 @@ void loop()
 
     //Serial.println(analogRead(A3));
 
-    double dir = direction(inPins);
+    //double dir = direction(inPins);
+    double dir = direction_class.get_direction(inPins);
 
     motorControl(dir, -2, 2, 1);
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
