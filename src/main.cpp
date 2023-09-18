@@ -20,7 +20,7 @@ int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 #define motor2BIN2 motorPins[5]     // AIN2 Right Motor
 #define motorSTBY motorPins[6]      // STBY (HIGH = Driver ON) (LOW = Driver OFF)
 
-int sensorLimit = 50;
+int sensorLimit = 500;
 int leftSpeed, rightSpeed;
 
 
@@ -83,10 +83,11 @@ double direction(int inPins[5])
 //MOTOR CODE
 
 // Function to control motors based on analog input and its range
-void motorControl(double analogValue, int minValue, int maxValue) {
+void motorControl(double analogValue, int minValue, int maxValue, float speedAdjust) {
     // Map analog value within the given range to PWM range (0 to 255)
     int steer_value = map(analogValue, minValue, maxValue, 0, 255);
 
+    // Apply the speed adjustment
     if (steer_value > 128) {
         // Steer right
         leftSpeed = 255;
@@ -100,6 +101,9 @@ void motorControl(double analogValue, int minValue, int maxValue) {
         leftSpeed = 255;
         rightSpeed = 255;
     }
+
+    leftSpeed = leftSpeed * speedAdjust;
+    rightSpeed = rightSpeed * speedAdjust;
 
     // Set motor speeds using PWM
     digitalWrite(motorSTBY, HIGH);
@@ -138,11 +142,13 @@ void loop()
     int inPins[5];
     for (int i = 0; i < 5; i++)
     {
-        inPins[i] = digitalRead(sensorPins[i]) > sensorLimit;
+        inPins[i] = analogRead(sensorPins[i]) > sensorLimit;
     }
+
+    //Serial.println(analogRead(A3));
 
     double dir = direction(inPins);
 
-    motorControl(dir, -2, 2);
-    PrintMotorSpeed(1000, leftSpeed, rightSpeed, dir);
+    motorControl(dir, -2, 2, 1);
+    PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
 }
