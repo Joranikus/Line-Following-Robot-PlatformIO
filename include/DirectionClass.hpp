@@ -18,6 +18,7 @@ namespace dir {
         int arr_sum(int inPins[5]);
         double this_direction(int inPins[5]);
         double weighted(int max, int ix, double value);
+        void update_past_directions(double value);
     };
 
 } // dir

@@ -6,6 +6,8 @@
 
 namespace dir {
     DirectionClass::DirectionClass() {
+        /*Init a class to keep track of previous positions, and outputs ned position.*/
+
         for (int i = 0; i < 100; i++)
         {
             past_directions[i] = 0.0;
@@ -13,13 +15,12 @@ namespace dir {
     }
 
     double DirectionClass::get_direction(int inPins[5]) {
-        for (int i = 0; i < 99; i++)
-        {
-            past_directions[i] = past_directions[i + 1];
-        }
 
-        past_directions[99] = this_direction(inPins);
+        //Gets current direction from sensor, and updates the list of prev values.
+        double new_value = DirectionClass::this_direction(inPins);
+        DirectionClass::update_past_directions(new_value);
 
+        //Calculates a new direction based on previous sensor inputs
         double direction = 0.0;
         for (int i = 0; i < 100; i++)
         {
@@ -29,7 +30,18 @@ namespace dir {
         return direction;
     }
 
+    void DirectionClass::update_past_directions(double value) {
+        //Shifts the whole list 1 spot, discarding the oldest value, and making room for the new one.
+        for (int i = 0; i < 99; i++)
+        {
+            past_directions[i] = past_directions[i + 1];
+        }
+        past_directions[99] = value;
+    }
+
     double DirectionClass::weighted(int max, int ix, double value) {
+        //Returns a weighted value based on position in list.
+
         double num = ix * ix * ix * ix;
         double den = max * max * max * max;
 
@@ -38,6 +50,7 @@ namespace dir {
 
     int DirectionClass::arr_sum(int inPins[5])
     {
+        //Returns the sum of alements in array.
         int s = 0;
         for (int i = 0; i < 5; ++i) {
             s += inPins[i];
@@ -46,25 +59,26 @@ namespace dir {
     }
 
     double DirectionClass::this_direction(int inPins[5]) {
-        if (DirectionClass::arr_sum(inPins) == 0) {
-            return 0.0;
-        }
-        else if (DirectionClass::arr_sum(inPins) == 5) {
-            return 0.0;
-        }
 
+        int as = arr_sum(inPins);
+        if ((as == 0) or (as == 5)){return 0.0;}
+
+        //Sets the upper and lower bound to the edges.
         int minIx = 5;
         int maxIx = -1;
 
+        //Updates the upper and lower bound based on pin state.
         for (int i = 0; i < 5; i++)
         {
             if ((i > maxIx) and inPins[i]){maxIx = i;}
             if ((i < minIx) and inPins[i]){minIx = i;}
         }
 
+        //Shifts the bounds from [0, 4] to [-2, 2]
         minIx -= 2;
         maxIx -= 2;
 
+        //Returns the lower bound plus half the differende. (Returns the number in the middle of the bounds)
         double tmp = static_cast<double>(minIx) + (static_cast<double>(maxIx) - static_cast<double>(minIx)) / 2.0;
         return tmp;
     }
