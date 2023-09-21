@@ -151,8 +151,8 @@ void loop()
 
     //Serial.println(analogRead(A3));
 
-    //double dir = direction(inPins);
-    double dir = direction_class.get_direction(inPins);
+    double dir = direction(inPins);
+    //double dir = direction_class.get_direction(inPins);
 
     motorControl(dir, -2, 2, 1);
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
