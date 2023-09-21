@@ -40,6 +40,7 @@ void setup()
     {
         pinMode(pin, INPUT);
     }
+    //^^^^^ Not needed when using direction class
 
     // Motor Output
     for (int pin : motorPins)
@@ -63,12 +64,8 @@ int arrSum(int inPins[5])
 // Sensor Function
 double direction(int inPins[5])
 {
-    if (arrSum(inPins) == 0) {
-        return prev_dir;
-    }
-    else if (arrSum(inPins) == 5) {
-        return prev_dir;
-    }
+    int arr_sum = arrSum(inPins);
+    if ((arr_sum == 0) or (arr_sum == 5)){return prev_dir;}
 
     int minIx = 5;
     int maxIx = -1;
