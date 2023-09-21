@@ -9,13 +9,19 @@ namespace dir {
     DirectionClass::DirectionClass(int pins[5]) {
         /*Init a class to keep track of previous positions, and outputs ned position.*/
 
+        for (int i = 0; i < 5; i++)
+        {
+            sensorPins[i] = pins[i];
+            outPins[i] = 0;
+        }
+
         for (int i = 0; i < 100; i++)
         {
             past_directions[i] = 0.0;
         }
     }
 
-    double DirectionClass::get_direction(int inPins[5]) {
+    double DirectionClass::get_direction() {
 
         //Gets current direction from sensor, and updates the list of prev values.
         DirectionClass::readSensorPins();
@@ -43,6 +49,7 @@ namespace dir {
 
     double DirectionClass::weighted(int max, int ix, double value) {
         //Returns a weighted value based on position in list.
+        //Returns value * (ix ^ 4 / max ^ 4)
 
         double num = ix * ix * ix * ix;
         double den = max * max * max * max;
@@ -50,12 +57,14 @@ namespace dir {
         return value * (num / den);
     }
 
-    int DirectionClass::arr_sum(int inPins[5])
+    int DirectionClass::arr_sum(const int* arr)
     {
-        //Returns the sum of alements in array.
+        //Returns the sum of elements in array.
+        //NB! Max length of array is 2^16, but max value of output is 2^15
+
         int s = 0;
-        for (int i = 0; i < 5; ++i) {
-            s += inPins[i];
+        for (unsigned int i = 0; i < sizeof(&arr) / sizeof(int); ++i) {
+            s += arr[i];
         }
         return s;
     }
@@ -80,7 +89,7 @@ namespace dir {
         minIx -= 2;
         maxIx -= 2;
 
-        //Returns the lower bound plus half the differende. (Returns the number in the middle of the bounds)
+        //Returns the lower bound plus half the difference. (Returns the number in the middle of the bounds)
         double tmp = static_cast<double>(minIx) + (static_cast<double>(maxIx) - static_cast<double>(minIx)) / 2.0;
         return tmp;
     }
