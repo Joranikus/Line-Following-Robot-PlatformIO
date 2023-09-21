@@ -14,7 +14,7 @@ namespace dir {
         double get_direction();
 
     private:
-        double past_directions[100];
+        double past_directions[100] = {0};
         static int arr_sum(const int inPins[5]);
         double this_direction();
         static double weighted(int max, int ix, double value);

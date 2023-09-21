@@ -35,6 +35,7 @@ void setup()
     Serial.begin(9600);
 
     // Sensor Input
+    //When using the direction class, this loop is not needed.
     for (int pin : sensorPins)
     {
         pinMode(pin, INPUT);

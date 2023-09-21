@@ -15,9 +15,9 @@ namespace dir {
             outPins[i] = 0;
         }
 
-        for (int i = 0; i < 100; i++)
+        for (int pin : sensorPins)
         {
-            past_directions[i] = 0.0;
+            pinMode(pin, INPUT);
         }
     }
 
