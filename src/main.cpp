@@ -51,8 +51,7 @@ void setup()
 
 //SENSOR CODE
 
-// Sum Function
-int arrSum(int inPins[5])
+int arrSum(const int inPins[5])
 {
     int s = 0;
     for (int i = 0; i < 5; ++i) {
@@ -64,21 +63,27 @@ int arrSum(int inPins[5])
 // Sensor Function
 double direction(int inPins[5])
 {
+    //Get sum of sensor inputs
+    //If all sensors are on or off, return previous position
     int arr_sum = arrSum(inPins);
     if ((arr_sum == 0) or (arr_sum == 5)){return prev_dir;}
 
+    //Sets upper and lower bound to extremes
     int minIx = 5;
     int maxIx = -1;
 
+    //Adjusts upper and lower bound to actual values
     for (int i = 0; i < 5; i++)
     {
         if ((i > maxIx) and inPins[i]){maxIx = i;}
         if ((i < minIx) and inPins[i]){minIx = i;}
     }
 
+    //Offsets bounds from [0, 4] to [-2, 2]
     minIx -= 2;
     maxIx -= 2;
 
+    //Sets direction to lower bound + average of bounds
     double tmp = static_cast<double>(minIx) + (static_cast<double>(maxIx) - static_cast<double>(minIx)) / 2.0;
 
     prev_dir = tmp;
@@ -140,20 +145,19 @@ void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, doub
     }
 }
 
-//LOOP
-
 void loop()
 {
+
+    //Not needed when direction class is used
     int inPins[5];
     for (int i = 0; i < 5; i++)
     {
         inPins[i] = analogRead(sensorPins[i]) > sensorLimit;
     }
-
-    //Serial.println(analogRead(A3));
+    //^^^^ Not needed when using direction class
 
     double dir = direction(inPins);
-    //double dir = direction_class.get_direction(inPins);
+    //double dir = direction_class.get_direction();
 
     motorControl(dir, -2, 2, 1);
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);

@@ -6,10 +6,11 @@
 #include "DirectionClass.hpp"
 
 namespace dir {
-    DirectionClass::DirectionClass(int pins[5]) {
-        /*Init a class to keep track of previous positions, and outputs ned position.*/
+    DirectionClass::DirectionClass(const int pins[], int antallPins)
+    : antallPins(antallPins) {
+        /*Init a class to keep track of previous positions, and outputs new position.*/
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < antallPins; i++)
         {
             sensorPins[i] = pins[i];
             outPins[i] = 0;
@@ -57,21 +58,21 @@ namespace dir {
         return value * (num / den);
     }
 
-    int DirectionClass::arr_sum(const int* arr)
+    int DirectionClass::arr_sum(const int* arr, int size)
     {
         //Returns the sum of elements in array.
         //NB! Max length of array is 2^16, but max value of output is 2^15
 
-        int s = 0;
-        for (unsigned int i = 0; i < sizeof(&arr) / sizeof(int); ++i) {
-            s += arr[i];
+        int sum = 0;
+        for (unsigned int i = 0; i < size; ++i) {
+            sum += arr[i];
         }
-        return s;
+        return sum;
     }
 
     double DirectionClass::this_direction() {
 
-        int as = arr_sum(outPins);
+        int as = arr_sum(outPins, antallPins);
         if ((as == 0) or (as == 5)){return 0.0;}
 
         //Sets the upper and lower bound to the edges.
@@ -95,7 +96,7 @@ namespace dir {
     }
 
     void DirectionClass::readSensorPins() {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < antallPins; i++)
         {
             outPins[i] = analogRead(sensorPins[i]) > sensorLimit;
         }
