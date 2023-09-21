@@ -12,6 +12,8 @@ int sensorPins[5] = {
         A4, // Sensor 5
 };
 
+double prev_dir = 0.0;
+
 dir::DirectionClass direction_class{sensorPins};
 
 int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
@@ -26,7 +28,6 @@ int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 
 int sensorLimit = 500;
 int leftSpeed, rightSpeed;
-
 
 void setup()
 {
@@ -62,10 +63,10 @@ int arrSum(int inPins[5])
 double direction(int inPins[5])
 {
     if (arrSum(inPins) == 0) {
-        return 0.0;
+        return prev_dir;
     }
     else if (arrSum(inPins) == 5) {
-        return 0.0;
+        return prev_dir;
     }
 
     int minIx = 5;
@@ -81,6 +82,8 @@ double direction(int inPins[5])
     maxIx -= 2;
 
     double tmp = static_cast<double>(minIx) + (static_cast<double>(maxIx) - static_cast<double>(minIx)) / 2.0;
+
+    prev_dir = tmp;
     return tmp;
 }
 
