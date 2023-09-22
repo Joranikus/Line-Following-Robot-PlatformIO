@@ -27,25 +27,24 @@ namespace dir {
         //Gets current direction from sensor, and updates the list of prev values.
         DirectionClass::readSensorPins();
         double new_value = DirectionClass::this_direction();
-        DirectionClass::update_past_directions(new_value);
+        DirectionClass::update_past_directions(new_value, lenght_of_past_dir);
 
         //Calculates a new direction based on previous sensor inputs
         double direction = 0.0;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < lenght_of_past_dir; i++)
         {
             direction += DirectionClass::weighted(100, i, past_directions[i]);
         }
-
         return direction;
     }
 
-    void DirectionClass::update_past_directions(double value) {
+    void DirectionClass::update_past_directions(double value, int length_of_prev_direction_list) {
         //Shifts the whole list 1 spot, discarding the oldest value, and making room for the new one.
-        for (int i = 0; i < 99; i++)
+        for (int i = 0; i < (length_of_prev_direction_list - 1); i++)
         {
             past_directions[i] = past_directions[i + 1];
         }
-        past_directions[99] = value;
+        past_directions[length_of_prev_direction_list - 1] = value;
     }
 
     double DirectionClass::weighted(int max, int ix, double value) {
