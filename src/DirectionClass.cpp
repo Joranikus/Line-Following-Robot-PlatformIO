@@ -35,7 +35,9 @@ namespace dir {
         {
             direction += DirectionClass::weighted(100, i, past_directions[i]);
         }
-        return direction;
+
+        double PID_value = get_proposional() + get_integral() + get_integral();
+        return direction + PID_value;
     }
 
     void DirectionClass::update_past_directions(double value, int length_of_prev_direction_list) {
@@ -72,25 +74,25 @@ namespace dir {
     double DirectionClass::this_direction() {
 
         int as = arr_sum(outPins, antallPins);
-        if ((as == 0) or (as == 5)){return 0.0;}
+        if ((as == 0) or (as == antallPins)){return 0.0;}
 
         //Sets the upper and lower bound to the edges.
-        int minIx = 5;
+        int minIx = antallPins;
         int maxIx = -1;
 
         //Updates the upper and lower bound based on pin state.
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < antallPins; i++)
         {
             if ((i > maxIx) and outPins[i]){maxIx = i;}
             if ((i < minIx) and outPins[i]){minIx = i;}
         }
 
-        //Shifts the bounds from [0, 4] to [-2, 2]
-        minIx -= 2;
-        maxIx -= 2;
+        //Shifts the bounds from [0, antallPins - 1] to [0, 1]
+        double minIxDouble = static_cast<double>(minIx) / static_cast<double>(antallPins);
+        double maxIxDouble = static_cast<double>(maxIx) / static_cast<double>(antallPins);
 
         //Returns the lower bound plus half the difference. (Returns the number in the middle of the bounds)
-        double tmp = static_cast<double>(minIx) + (static_cast<double>(maxIx) - static_cast<double>(minIx)) / 2.0;
+        double tmp = minIxDouble + (maxIxDouble - minIxDouble) / 2.0;
         return tmp;
     }
 
@@ -99,6 +101,26 @@ namespace dir {
         {
             outPins[i] = analogRead(sensorPins[i]) > sensorLimit;
         }
+    }
+
+    double DirectionClass::get_proposional() {
+        return pid_Kp * past_directions[lenght_of_past_dir - 1];
+    }
+
+    double DirectionClass::get_integral() {
+        if (past_directions[lenght_of_past_dir - 1] * prev_integral < 0) {prev_integral = 0;}
+
+        prev_integral += pid_Ki * past_directions[lenght_of_past_dir - 1];
+        return prev_integral;
+
+//        double sum = 0;
+//        for (double val : past_directions)
+//        {
+//            if (sum * val < 0){sum = 0;}
+//            else {sum += val;}
+//        }
+//
+//        return pid_Ki * sum;
     }
 
 } // dir

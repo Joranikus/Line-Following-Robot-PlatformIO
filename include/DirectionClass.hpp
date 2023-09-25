@@ -5,6 +5,7 @@
 #ifndef LINE_FOLLOWING_ROBOT_PLATFORMIO_DIRECTIONCLASS_HPP
 #define LINE_FOLLOWING_ROBOT_PLATFORMIO_DIRECTIONCLASS_HPP
 
+#include <Arduino.h>
 
 namespace dir {
 
@@ -27,6 +28,17 @@ namespace dir {
         int outPins[5];
         int sensorLimit = 500;
         void readSensorPins();
+
+        double pid_Kp;
+        double pid_Ki;
+        double pid_Kd;
+
+        double prev_integral = 0;
+        unsigned long prev_timestep = millis();
+
+        double get_proposional();
+        double get_integral();
+        double get_derived();
     };
 
 } // dir
