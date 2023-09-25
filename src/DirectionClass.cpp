@@ -20,6 +20,8 @@ namespace dir {
         {
             pinMode(pin, INPUT);
         }
+
+        prev_timestep = millis();
     }
 
     double DirectionClass::get_direction() {
@@ -36,7 +38,13 @@ namespace dir {
             direction += DirectionClass::weighted(100, i, past_directions[i]);
         }*/
 
+        unsigned long new_time = millis();
+        dt = new_time - prev_timestep;
+        prev_timestep = new_time;
+
         double PID_value = get_proposional() + get_integral() + get_derived();
+        return PID_value;
+
         //Serial.print("PID_value: ");
         //Serial.println(PID_value);
         return past_directions[length_of_past_dir - 1]; // + PID_value;
@@ -115,7 +123,7 @@ namespace dir {
         if ((past_directions[length_of_past_dir - 1] - pid_SP) * prev_integral < 0) {prev_integral = 0;}
         if ((past_directions[length_of_past_dir - 1] - pid_SP) == 0) {prev_integral = 0;}
 
-        prev_integral += pid_Ki * (past_directions[length_of_past_dir - 1] - pid_SP);
+        prev_integral += pid_Ki * (past_directions[length_of_past_dir - 1] - pid_SP) * dt;
         return prev_integral;
 
 //        double sum = 0;
@@ -129,12 +137,10 @@ namespace dir {
     }
 
     double DirectionClass::get_derived() {
-        unsigned long new_timestep = millis();
         double out = (past_directions[length_of_past_dir - 1]
                 - past_directions[length_of_past_dir - 2])
-                        / (new_timestep - prev_timestep);
+                        / dt;
 
-        prev_timestep = new_timestep;
         return out;
     }
 

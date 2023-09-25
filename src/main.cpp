@@ -164,5 +164,5 @@ void loop()
     double dir = direction_class.get_direction();
 
     motorControl(dir, 0, 1, 1);
-    //PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
+    PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
 }

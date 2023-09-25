@@ -37,6 +37,7 @@ namespace dir {
         double prev_direction = 0;
         double prev_integral = 0;
         unsigned long prev_timestep = millis();
+        unsigned long dt = 0;
 
         double get_proposional();
         double get_integral();
