@@ -14,7 +14,7 @@ int sensorPins[5] = {
 
 double prev_dir = 0.0;
 
-dir::DirectionClass direction_class{sensorPins};
+dir::DirectionClass direction_class{sensorPins, 5};
 
 int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 
@@ -36,10 +36,10 @@ void setup()
 
     // Sensor Input
     //When using the direction class, this loop is not needed.
-    for (int pin : sensorPins)
+    /*for (int pin : sensorPins)
     {
         pinMode(pin, INPUT);
-    }
+    }*/
     //^^^^^ Not needed when using direction class
 
     // Motor Output
@@ -149,15 +149,15 @@ void loop()
 {
 
     //Not needed when direction class is used
-    int inPins[5];
+    /*int inPins[5];
     for (int i = 0; i < 5; i++)
     {
         inPins[i] = analogRead(sensorPins[i]) > sensorLimit;
-    }
+    }*/
     //^^^^ Not needed when using direction class
 
-    double dir = direction(inPins);
-    //double dir = direction_class.get_direction();
+    //double dir = direction(inPins);
+    double dir = direction_class.get_direction();
 
     motorControl(dir, 0, 1, 1);
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);

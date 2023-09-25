@@ -27,26 +27,26 @@ namespace dir {
         //Gets current direction from sensor, and updates the list of prev values.
         DirectionClass::readSensorPins();
         double new_value = DirectionClass::this_direction();
-        DirectionClass::update_past_directions(new_value, lenght_of_past_dir);
+        DirectionClass::update_past_directions(new_value);
 
         //Calculates a new direction based on previous sensor inputs
-        double direction = 0.0;
-        for (int i = 0; i < lenght_of_past_dir; i++)
+        /*double direction = 0.0;
+        for (int i = 0; i < length_of_past_dir; i++)
         {
             direction += DirectionClass::weighted(100, i, past_directions[i]);
-        }
+        }*/
 
         double PID_value = get_proposional() + get_integral() + get_integral();
-        return direction + PID_value;
+        return past_directions[length_of_past_dir - 1]; // + PID_value;
     }
 
-    void DirectionClass::update_past_directions(double value, int length_of_prev_direction_list) {
+    void DirectionClass::update_past_directions(double value) {
         //Shifts the whole list 1 spot, discarding the oldest value, and making room for the new one.
-        for (int i = 0; i < (length_of_prev_direction_list - 1); i++)
+        for (int i = 0; i < (length_of_past_dir - 1); i++)
         {
             past_directions[i] = past_directions[i + 1];
         }
-        past_directions[length_of_prev_direction_list - 1] = value;
+        past_directions[length_of_past_dir - 1] = value;
     }
 
     double DirectionClass::weighted(int max, int ix, double value) {
@@ -104,13 +104,13 @@ namespace dir {
     }
 
     double DirectionClass::get_proposional() {
-        return pid_Kp * past_directions[lenght_of_past_dir - 1];
+        return pid_Kp * past_directions[length_of_past_dir - 1];
     }
 
     double DirectionClass::get_integral() {
-        if (past_directions[lenght_of_past_dir - 1] * prev_integral < 0) {prev_integral = 0;}
+        if (past_directions[length_of_past_dir - 1] * prev_integral < 0) {prev_integral = 0;}
 
-        prev_integral += pid_Ki * past_directions[lenght_of_past_dir - 1];
+        prev_integral += pid_Ki * past_directions[length_of_past_dir - 1];
         return prev_integral;
 
 //        double sum = 0;
