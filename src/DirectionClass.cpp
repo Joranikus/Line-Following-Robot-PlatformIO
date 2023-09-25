@@ -36,10 +36,10 @@ namespace dir {
             direction += DirectionClass::weighted(100, i, past_directions[i]);
         }*/
 
-        double PID_value = get_proposional() + get_integral() + get_integral();
-        Serial.print("PID_value: ");
-        Serial.println(PID_value);
-        return past_directions[length_of_past_dir - 1] + PID_value;
+        double PID_value = get_proposional() + get_integral() + get_derived();
+        //Serial.print("PID_value: ");
+        //Serial.println(PID_value);
+        return past_directions[length_of_past_dir - 1]; // + PID_value;
     }
 
     void DirectionClass::update_past_directions(double value) {
