@@ -26,7 +26,7 @@ namespace dir {
         int antallPins;
         int sensorPins[5];
         int outPins[5];
-        int sensorLimit = 500;
+        int sensorLimit = 850;
         void readSensorPins();
 
         double pid_SP = 0.0;

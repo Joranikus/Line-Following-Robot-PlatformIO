@@ -31,7 +31,7 @@ namespace dir {
         double new_value = DirectionClass::this_direction();
         DirectionClass::update_past_directions(new_value);
 
-        return past_directions[length_of_past_dir - 1];
+        //return past_directions[length_of_past_dir - 1];
 
         unsigned long new_time = millis();
         dt = new_time - prev_timestep;
@@ -108,6 +108,8 @@ namespace dir {
     }
 
     void DirectionClass::readSensorPins() {
+
+        //Serial.println(analogRead(sensorPins[0]));
         for (int i = 0; i < antallPins; i++)
         {
             outPins[i] = analogRead(sensorPins[i]) > sensorLimit;

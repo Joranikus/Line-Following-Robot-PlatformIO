@@ -28,7 +28,7 @@ int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 #define motor2BIN2 motorPins[5]     // AIN2 Right Motor
 #define motorSTBY motorPins[6]      // STBY (HIGH = Driver ON) (LOW = Driver OFF)
 
-int leftSpeed, rightSpeed;
+int leftSpeed, rightSpeed, steer_value_global;
 
 void setup()
 {
@@ -47,7 +47,10 @@ void setup()
 // Function to control motors based on analog input and its range
 void motorControl(double analogValue, int minValue, int maxValue, float speedAdjust) {
     // Map analog value within the given range to PWM range (0 to 255)
-    int steer_value = map(analogValue, minValue, maxValue, 0, 255);
+    //int steer_value = map(analogValue, minValue, maxValue, 0, 255);
+
+    int steer_value = (analogValue - minValue) / (maxValue - minValue) * 255;
+    steer_value_global = steer_value;
     //double steer_val_double = analogValue * 255;
     //int steer_value = static_cast<int>(steer_val_double);
 
@@ -101,6 +104,10 @@ void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, doub
         Serial.print(leftSpeed);
         Serial.print(" | Right Speed: ");
         Serial.print(rightSpeed);
+        Serial.print(" | Steer value: ");
+        Serial.print(steer_value_global);
+
+        Serial.println();
 
         /*Serial.print(" | loops / second: ");
         Serial.print(dt);
@@ -114,7 +121,8 @@ void loop()
 {
     double dir = direction_class.get_direction();
 
-    iters++;
+    //For loop timer
+    //iters++;
 
     motorControl(dir, -1, 1, 1);
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
