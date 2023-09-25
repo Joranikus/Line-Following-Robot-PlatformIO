@@ -97,9 +97,12 @@ namespace dir {
             if ((i < minIx) and outPins[i]){minIx = i;}
         }
 
-        //Shifts the bounds from [0, antallPins - 1] to [0, 1]
-        double minIxDouble = static_cast<double>(minIx) / (static_cast<double>(antallPins) - 1.0);
-        double maxIxDouble = static_cast<double>(maxIx) / (static_cast<double>(antallPins) - 1.0);
+        //Shifts the bounds from [0, antallPins - 1] to [0, 2]
+        double minIxDouble = 2.0 * static_cast<double>(minIx) / (static_cast<double>(antallPins) - 1.0) - 1.0;
+        double maxIxDouble = 2.0 * static_cast<double>(maxIx) / (static_cast<double>(antallPins) - 1.0) - 1.0;
+
+        minIxDouble -= 1;
+        maxIxDouble -= 1;
 
         //Returns the lower bound plus half the difference. (Returns the number in the middle of the bounds)
         double tmp = minIxDouble + (maxIxDouble - minIxDouble) / 2.0;
@@ -141,7 +144,7 @@ namespace dir {
                 - past_directions[length_of_past_dir - 2])
                         / dt;
 
-        return out;
+        return pid_Kd * out;
     }
 
 } // dir
