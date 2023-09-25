@@ -29,10 +29,12 @@ namespace dir {
         int sensorLimit = 500;
         void readSensorPins();
 
-        double pid_Kp;
-        double pid_Ki;
-        double pid_Kd;
+        double pid_SP = 0.5;
+        double pid_Kp = 1.0;
+        double pid_Ki = 1.0;
+        double pid_Kd = 1.0;
 
+        double prev_direction = 0;
         double prev_integral = 0;
         unsigned long prev_timestep = millis();
 

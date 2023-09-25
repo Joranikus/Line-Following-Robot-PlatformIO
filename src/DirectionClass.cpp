@@ -37,7 +37,9 @@ namespace dir {
         }*/
 
         double PID_value = get_proposional() + get_integral() + get_integral();
-        return past_directions[length_of_past_dir - 1]; // + PID_value;
+        Serial.print("PID_value: ");
+        Serial.println(PID_value);
+        return past_directions[length_of_past_dir - 1] + PID_value;
     }
 
     void DirectionClass::update_past_directions(double value) {
@@ -74,7 +76,7 @@ namespace dir {
     double DirectionClass::this_direction() {
 
         int as = arr_sum(outPins, antallPins);
-        if ((as == 0) or (as == antallPins)){return 0.0;}
+        if ((as == 0) or (as == antallPins)){return prev_direction;}
 
         //Sets the upper and lower bound to the edges.
         int minIx = antallPins;
@@ -88,11 +90,13 @@ namespace dir {
         }
 
         //Shifts the bounds from [0, antallPins - 1] to [0, 1]
-        double minIxDouble = static_cast<double>(minIx) / static_cast<double>(antallPins);
-        double maxIxDouble = static_cast<double>(maxIx) / static_cast<double>(antallPins);
+        double minIxDouble = static_cast<double>(minIx) / (static_cast<double>(antallPins) - 1.0);
+        double maxIxDouble = static_cast<double>(maxIx) / (static_cast<double>(antallPins) - 1.0);
 
         //Returns the lower bound plus half the difference. (Returns the number in the middle of the bounds)
         double tmp = minIxDouble + (maxIxDouble - minIxDouble) / 2.0;
+
+        prev_direction = tmp;
         return tmp;
     }
 
@@ -104,13 +108,14 @@ namespace dir {
     }
 
     double DirectionClass::get_proposional() {
-        return pid_Kp * past_directions[length_of_past_dir - 1];
+        return pid_Kp * (past_directions[length_of_past_dir - 1] - pid_SP);
     }
 
     double DirectionClass::get_integral() {
-        if (past_directions[length_of_past_dir - 1] * prev_integral < 0) {prev_integral = 0;}
+        if ((past_directions[length_of_past_dir - 1] - pid_SP) * prev_integral < 0) {prev_integral = 0;}
+        if ((past_directions[length_of_past_dir - 1] - pid_SP) == 0) {prev_integral = 0;}
 
-        prev_integral += pid_Ki * past_directions[length_of_past_dir - 1];
+        prev_integral += pid_Ki * (past_directions[length_of_past_dir - 1] - pid_SP);
         return prev_integral;
 
 //        double sum = 0;
@@ -121,6 +126,16 @@ namespace dir {
 //        }
 //
 //        return pid_Ki * sum;
+    }
+
+    double DirectionClass::get_derived() {
+        unsigned long new_timestep = millis();
+        double out = (past_directions[length_of_past_dir - 1]
+                - past_directions[length_of_past_dir - 2])
+                        / (new_timestep - prev_timestep);
+
+        prev_timestep = new_timestep;
+        return out;
     }
 
 } // dir

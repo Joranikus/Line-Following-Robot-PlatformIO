@@ -95,7 +95,11 @@ double direction(int inPins[5])
 // Function to control motors based on analog input and its range
 void motorControl(double analogValue, int minValue, int maxValue, float speedAdjust) {
     // Map analog value within the given range to PWM range (0 to 255)
-    int steer_value = map(analogValue, minValue, maxValue, 0, 255);
+    //int steer_value = map(analogValue, minValue, maxValue, 0, 255);
+    double steer_val_double = analogValue * 255;
+    int steer_value = static_cast<int>(steer_val_double);
+
+    //Serial.println(steer_value);
 
     // Apply the speed adjustment
     if (steer_value > 128) {
@@ -160,5 +164,5 @@ void loop()
     double dir = direction_class.get_direction();
 
     motorControl(dir, 0, 1, 1);
-    PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
+    //PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
 }
