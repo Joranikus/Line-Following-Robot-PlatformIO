@@ -4,6 +4,9 @@
 
 //SETUP
 
+//For loop timer
+//int iters = 0;
+
 int sensorPins[5] = {
         A0, // Sensor 1
         A1, // Sensor 2
@@ -12,8 +15,7 @@ int sensorPins[5] = {
         A4, // Sensor 5
 };
 
-double prev_dir = 0.0;
-
+//Creates a direction object.
 dir::DirectionClass direction_class{sensorPins, 5};
 
 int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
@@ -26,7 +28,6 @@ int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 #define motor2BIN2 motorPins[5]     // AIN2 Right Motor
 #define motorSTBY motorPins[6]      // STBY (HIGH = Driver ON) (LOW = Driver OFF)
 
-int sensorLimit = 500;
 int leftSpeed, rightSpeed;
 
 void setup()
@@ -34,60 +35,11 @@ void setup()
     // Activates serial
     Serial.begin(9600);
 
-    // Sensor Input
-    //When using the direction class, this loop is not needed.
-    /*for (int pin : sensorPins)
-    {
-        pinMode(pin, INPUT);
-    }*/
-    //^^^^^ Not needed when using direction class
-
     // Motor Output
     for (int pin : motorPins)
     {
         pinMode(pin, OUTPUT);
     }
-}
-
-//SENSOR CODE
-
-int arrSum(const int inPins[5])
-{
-    int s = 0;
-    for (int i = 0; i < 5; ++i) {
-        s += inPins[i];
-    }
-    return s;
-}
-
-// Sensor Function
-double direction(int inPins[5])
-{
-    //Get sum of sensor inputs
-    //If all sensors are on or off, return previous position
-    int arr_sum = arrSum(inPins);
-    if ((arr_sum == 0) or (arr_sum == 5)){return prev_dir;}
-
-    //Sets upper and lower bound to extremes
-    int minIx = 5;
-    int maxIx = -1;
-
-    //Adjusts upper and lower bound to actual values
-    for (int i = 0; i < 5; i++)
-    {
-        if ((i > maxIx) and inPins[i]){maxIx = i;}
-        if ((i < minIx) and inPins[i]){minIx = i;}
-    }
-
-    //Offsets bounds from [0, 4] to [-2, 2]
-    minIx -= 2;
-    maxIx -= 2;
-
-    //Sets direction to lower bound + average of bounds
-    double tmp = static_cast<double>(minIx) + (static_cast<double>(maxIx) - static_cast<double>(minIx)) / 2.0;
-
-    prev_dir = tmp;
-    return tmp;
 }
 
 //MOTOR CODE
@@ -138,6 +90,9 @@ void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, doub
 
     if (currentTime - lastPrintTime >= interval)
     {
+        //For loop timer
+        //unsigned long dt = currentTime - lastPrintTime;
+
         lastPrintTime = currentTime;
 
         Serial.print("Analog Value: ");
@@ -145,23 +100,21 @@ void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, doub
         Serial.print(" | Left Speed: ");
         Serial.print(leftSpeed);
         Serial.print(" | Right Speed: ");
-        Serial.println(rightSpeed);
+        Serial.print(rightSpeed);
+
+        /*Serial.print(" | loops / second: ");
+        Serial.print(dt);
+        Serial.print(" | Loops: ");
+        Serial.println(iters);
+        iters = 0;*/
     }
 }
 
 void loop()
 {
-
-    //Not needed when direction class is used
-    /*int inPins[5];
-    for (int i = 0; i < 5; i++)
-    {
-        inPins[i] = analogRead(sensorPins[i]) > sensorLimit;
-    }*/
-    //^^^^ Not needed when using direction class
-
-    //double dir = direction(inPins);
     double dir = direction_class.get_direction();
+
+    iters++;
 
     motorControl(dir, -1, 1, 1);
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);

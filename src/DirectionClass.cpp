@@ -31,23 +31,21 @@ namespace dir {
         double new_value = DirectionClass::this_direction();
         DirectionClass::update_past_directions(new_value);
 
-        //Calculates a new direction based on previous sensor inputs
-        /*double direction = 0.0;
-        for (int i = 0; i < length_of_past_dir; i++)
-        {
-            direction += DirectionClass::weighted(100, i, past_directions[i]);
-        }*/
+        return past_directions[length_of_past_dir - 1];
 
         unsigned long new_time = millis();
         dt = new_time - prev_timestep;
         prev_timestep = new_time;
 
+
+        //Propsional vil være Kp * [-1 til 1]
+        //=> PID_value vil ikke alltid vil være mellom -1 og 1
+        //Dermed må den på ett eller anna vis bli normalisert
+        //Så vi faktisk kan plusse på integral og derived.
+        //Eks: proposional = 1, integral = 1 => PID_value = 2
+
         double PID_value = get_proposional() + get_integral() + get_derived();
         return PID_value;
-
-        //Serial.print("PID_value: ");
-        //Serial.println(PID_value);
-        return past_directions[length_of_past_dir - 1]; // + PID_value;
     }
 
     void DirectionClass::update_past_directions(double value) {
@@ -97,12 +95,10 @@ namespace dir {
             if ((i < minIx) and outPins[i]){minIx = i;}
         }
 
-        //Shifts the bounds from [0, antallPins - 1] to [0, 2]
-        double minIxDouble = 2.0 * static_cast<double>(minIx) / (static_cast<double>(antallPins) - 1.0) - 1.0;
-        double maxIxDouble = 2.0 * static_cast<double>(maxIx) / (static_cast<double>(antallPins) - 1.0) - 1.0;
-
-        minIxDouble -= 1;
-        maxIxDouble -= 1;
+        //Shifts the bounds from [0, antallPins - 1] to [0, max_val] => [-1, 1]
+        double max_val = 2.0;
+        double minIxDouble = max_val * static_cast<double>(minIx) / (static_cast<double>(antallPins) - 1.0) - 1.0;
+        double maxIxDouble = max_val * static_cast<double>(maxIx) / (static_cast<double>(antallPins) - 1.0) - 1.0;
 
         //Returns the lower bound plus half the difference. (Returns the number in the middle of the bounds)
         double tmp = minIxDouble + (maxIxDouble - minIxDouble) / 2.0;
