@@ -4,9 +4,6 @@
 
 //SETUP
 
-//For loop timer
-//int iters = 0;
-
 int sensorPins[5] = {
         A0, // Sensor 1
         A1, // Sensor 2
@@ -28,7 +25,7 @@ int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 #define motor2BIN2 motorPins[5]     // AIN2 Right Motor
 #define motorSTBY motorPins[6]      // STBY (HIGH = Driver ON) (LOW = Driver OFF)
 
-int leftSpeed, rightSpeed, steer_value_global;
+int leftSpeed, rightSpeed;
 
 void setup()
 {
@@ -45,34 +42,41 @@ void setup()
 //MOTOR CODE
 
 // Function to control motors based on analog input and its range
-void motorControl(double analogValue, int minValue, int maxValue, float speedAdjust) {
-    // Map analog value within the given range to PWM range (0 to 255)
-    //int steer_value = map(analogValue, minValue, maxValue, 0, 255);
+void motorControl(double analogValue, double minVal, double maxVal, double speedAdjust) {
+    double steer_value;
 
-    int steer_value = (analogValue - minValue) / (maxValue - minValue) * 255;
-    steer_value_global = steer_value;
-    //double steer_val_double = analogValue * 255;
-    //int steer_value = static_cast<int>(steer_val_double);
-
-    //Serial.println(steer_value);
-
-    // Apply the speed adjustment
-    if (steer_value > 128) {
-        // Steer right
-        leftSpeed = 255;
-        rightSpeed = (255 - steer_value) * 2;
-    } else if (steer_value < 128) {
-        // Steer left
-        leftSpeed = steer_value * 2;
-        rightSpeed = 255;
+    if (minVal >= 0) {
+        steer_value = analogValue - (maxVal - minVal) / 2.0;
+    } else if ((-1 * minVal) != maxVal) {
+        double diff = maxVal - minVal;
+        steer_value = (analogValue - minVal) - diff / 2.0;
+        maxVal = diff / 2.0;
+        minVal = -diff / 2.0;
     } else {
-        // No steering, both motors forward
-        leftSpeed = 255;
-        rightSpeed = 255;
+        steer_value = analogValue;
     }
 
-    leftSpeed = leftSpeed * speedAdjust;
-    rightSpeed = rightSpeed * speedAdjust;
+    double lS;
+    double rS;
+
+    if (steer_value > 0) {
+        //Steer right
+        lS = 255.0;
+        rS = 255.0 - 255.0 * steer_value / maxVal;
+    } else if (steer_value < 0) {
+        //Steer left
+        lS = 255.0 - 255.0 * steer_value / minVal;
+        rS = 255.0;
+    } else {
+        lS = 255.0;
+        rS = 255.0;
+    }
+
+    lS *= speedAdjust;
+    rS *= speedAdjust;
+
+    leftSpeed = static_cast<int>(lS);
+    rightSpeed = static_cast<int>(rS);
 
     // Set motor speeds using PWM
     digitalWrite(motorSTBY, HIGH);
@@ -86,16 +90,13 @@ void motorControl(double analogValue, int minValue, int maxValue, float speedAdj
     digitalWrite(motor2BIN2, LOW);
 }
 
-void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, double inputRange)
+void PrintMotorSpeed(unsigned long interval, double inputRange)
 {
     static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
 
     if (currentTime - lastPrintTime >= interval)
     {
-        //For loop timer
-        //unsigned long dt = currentTime - lastPrintTime;
-
         lastPrintTime = currentTime;
 
         Serial.print("Analog Value: ");
@@ -104,16 +105,8 @@ void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, doub
         Serial.print(leftSpeed);
         Serial.print(" | Right Speed: ");
         Serial.print(rightSpeed);
-        Serial.print(" | Steer value: ");
-        Serial.print(steer_value_global);
 
         Serial.println();
-
-        /*Serial.print(" | loops / second: ");
-        Serial.print(dt);
-        Serial.print(" | Loops: ");
-        Serial.println(iters);
-        iters = 0;*/
     }
 }
 
@@ -121,9 +114,6 @@ void loop()
 {
     double dir = direction_class.get_direction();
 
-    //For loop timer
-    //iters++;
-
     motorControl(dir, -1, 1, 1);
-    PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
+    PrintMotorSpeed(250, dir);
 }
