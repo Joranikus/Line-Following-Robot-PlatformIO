@@ -44,7 +44,20 @@ namespace dir {
         //Så vi faktisk kan plusse på integral og derived.
         //Eks: proposional = 1, integral = 1 => PID_value = 2
 
-        double PID_value = get_proposional() + get_integral() + get_derived();
+        double prop_part = get_proposional();
+        double inte_part = get_integral();
+        double derv_part = get_derived();
+
+        double PID_value = prop_part + inte_part + derv_part;
+        //Serial.print("Prop: ");
+        //Serial.print(prop_part);
+        //Serial.print(" | Inte: ");
+        //Serial.print(inte_part);
+        //Serial.print(" | Derv: ");
+        //Serial.print(derv_part);
+        //Serial.print(" | Tot: ");
+        //Serial.println(PID_value);
+
         return PID_value;
     }
 
