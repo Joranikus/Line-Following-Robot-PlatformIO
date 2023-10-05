@@ -126,6 +126,6 @@ void loop()
     //For loop timer
     //iters++;
 
-    motorControl(dir, -1, 1, 1);
+    motorControl(dir, -1, 1, 0.6);
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
 }
