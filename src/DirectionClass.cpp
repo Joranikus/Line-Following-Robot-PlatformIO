@@ -6,8 +6,10 @@
 #include "DirectionClass.hpp"
 
 namespace dir {
-    DirectionClass::DirectionClass(const int pins[], int antallPins)
-    : antallPins(antallPins) {
+
+    DirectionClass::DirectionClass(const int pins[], int antallPins, double Kp, double Ki, double Kd)
+    : antallPins(antallPins), pid_Kp(Kp), pid_Ki(Ki), pid_Kd(Kd) {
+
         /*Init a class to keep track of previous positions, and outputs new position.*/
 
         for (int i = 0; i < antallPins; i++)
@@ -129,33 +131,29 @@ namespace dir {
         }
     }
 
+
     double DirectionClass::get_proposional() {
         return pid_Kp * (past_directions[length_of_past_dir - 1] - pid_SP);
     }
 
     double DirectionClass::get_integral() {
+
         if ((past_directions[length_of_past_dir - 1] - pid_SP) * prev_integral < 0) {prev_integral = 0;}
         if ((past_directions[length_of_past_dir - 1] - pid_SP) == 0) {prev_integral = 0;}
 
         prev_integral += pid_Ki * (past_directions[length_of_past_dir - 1] - pid_SP) * dt;
         return prev_integral;
 
-//        double sum = 0;
-//        for (double val : past_directions)
-//        {
-//            if (sum * val < 0){sum = 0;}
-//            else {sum += val;}
-//        }
-//
-//        return pid_Ki * sum;
     }
 
     double DirectionClass::get_derived() {
+
         double out = (past_directions[length_of_past_dir - 1]
                 - past_directions[length_of_past_dir - 2])
                         / dt;
 
         return pid_Kd * out;
+
     }
 
-} // dir
+}
