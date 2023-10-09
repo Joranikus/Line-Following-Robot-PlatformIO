@@ -11,7 +11,7 @@ namespace dir {
 
     class DirectionClass {
     public:
-        explicit DirectionClass(const int *pins, int antallPins, double Kp, double Ki, double Kd);
+        explicit DirectionClass(const int *pins, int antallPins, double Kp, double Ki, double Kd, int sensorLimit);
         double get_direction();
 
     private:
@@ -26,7 +26,7 @@ namespace dir {
         int antallPins;
         int sensorPins[5]{};
         int outPins[5]{};
-        int sensorLimit = 500;
+        int sensorLimit;
         void readSensorPins();
 
         double pid_SP = 0.0;

@@ -7,8 +7,8 @@
 
 namespace dir {
 
-    DirectionClass::DirectionClass(const int pins[], int antallPins, double Kp, double Ki, double Kd)
-    : antallPins(antallPins), pid_Kp(Kp), pid_Ki(Ki), pid_Kd(Kd) {
+    DirectionClass::DirectionClass(const int pins[], int antallPins, double Kp, double Ki, double Kd, int sensorLimit)
+    : antallPins(antallPins), pid_Kp(Kp), pid_Ki(Ki), pid_Kd(Kd), sensorLimit(sensorLimit) {
 
         /*Init a class to keep track of previous positions, and outputs new position.*/
 
