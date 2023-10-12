@@ -40,6 +40,7 @@ mot::MotorControl motorController{outputPins, 7};
 void setup()
 {
     Serial.begin(9600);
+    motorController.motorPinSetup();
 }
 
 void loop()

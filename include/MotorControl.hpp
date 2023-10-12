@@ -21,6 +21,16 @@ namespace mot {
 
         }
 
+        void motorPinSetup() {
+            digitalWrite(motorSTBY, HIGH);
+
+            digitalWrite(leftMotorAIN1, HIGH);
+            digitalWrite(leftMotorAIN2, LOW);
+
+            digitalWrite(rightMotorBIN1, HIGH);
+            digitalWrite(rightMotorBIN2, LOW);
+        }
+
         void printMotorSpeed(unsigned long interval, double dirInput)
         {
             static unsigned long lastPrintTime = 0;
@@ -71,15 +81,8 @@ namespace mot {
             leftSpeed *= speedAdjust;
             rightSpeed *= speedAdjust;
 
-            digitalWrite(motorSTBY, HIGH);
-
             analogWrite(leftMotorPWM, leftSpeed);
-            digitalWrite(leftMotorAIN1, HIGH);
-            digitalWrite(leftMotorAIN2, LOW);
-
             analogWrite(rightMotorPWM, rightSpeed);
-            digitalWrite(rightMotorBIN1, HIGH);
-            digitalWrite(rightMotorBIN2, LOW);
         }
 
     private:
