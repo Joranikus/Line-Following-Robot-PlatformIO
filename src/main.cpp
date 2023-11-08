@@ -28,7 +28,7 @@ int motorPins[7] = {5, 2, 3, 6, 7, 8, 9};
 #define motor2BIN2 motorPins[5]     // AIN2 Right Motor
 #define motorSTBY motorPins[6]      // STBY (HIGH = Driver ON) (LOW = Driver OFF)
 
-int leftSpeed, rightSpeed, steer_value_global;
+//int leftSpeed, rightSpeed, steer_value_global;
 
 void setup()
 {
@@ -45,50 +45,21 @@ void setup()
 //MOTOR CODE
 
 // Function to control motors based on analog input and its range
-void motorControl(double analogValue, int minValue, int maxValue, float speedAdjust) {
-    // Map analog value within the given range to PWM range (0 to 255)
-    //int steer_value = map(analogValue, minValue, maxValue, 0, 255);
-
-
-    double analog = max(minValue, min(analogValue, maxValue));
-    int steer_value = (analog - minValue) / (maxValue - minValue) * 255;
-    steer_value_global = steer_value;
-    //double steer_val_double = analogValue * 255;
-    //int steer_value = static_cast<int>(steer_val_double);
-
-    //Serial.println(steer_value);
-
-    // Apply the speed adjustment
-    if (steer_value > 128) {
-        // Steer right
-        leftSpeed = 255;
-        rightSpeed = (255 - steer_value) * 2;
-    } else if (steer_value < 128) {
-        // Steer left
-        leftSpeed = steer_value * 2;
-        rightSpeed = 255;
-    } else {
-        // No steering, both motors forward
-        leftSpeed = 255;
-        rightSpeed = 255;
-    }
-
-    leftSpeed = leftSpeed * speedAdjust;
-    rightSpeed = rightSpeed * speedAdjust;
+void motorControl(dir::Tuple dir) {
 
     // Set motor speeds using PWM
-    digitalWrite(motorSTBY, HIGH);
+    //digitalWrite(motorSTBY, HIGH);
 
-    analogWrite(motor1PWM, leftSpeed);
-    digitalWrite(motor1AIN1, HIGH);
-    digitalWrite(motor1AIN2, LOW);
+    analogWrite(motor1PWM, dir.left);
+    //digitalWrite(motor1AIN1, HIGH);
+    //digitalWrite(motor1AIN2, LOW);
 
-    analogWrite(motor2PWM, rightSpeed);
-    digitalWrite(motor2BIN1, HIGH);
-    digitalWrite(motor2BIN2, LOW);
+    analogWrite(motor2PWM, dir.right);
+    //digitalWrite(motor2BIN1, HIGH);
+    //digitalWrite(motor2BIN2, LOW);
 }
 
-void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, double inputRange)
+void PrintMotorSpeed(unsigned long interval, dir::Tuple dir)
 {
     static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
@@ -100,14 +71,10 @@ void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, doub
 
         lastPrintTime = currentTime;
 
-        Serial.print("Analog Value: ");
-        Serial.print(inputRange);
         Serial.print(" | Left Speed: ");
-        Serial.print(leftSpeed);
+        Serial.print(dir.left);
         Serial.print(" | Right Speed: ");
-        Serial.print(rightSpeed);
-        Serial.print(" | Steer value: ");
-        Serial.print(steer_value_global);
+        Serial.print(dir.right);
 
         Serial.println();
 
@@ -121,11 +88,12 @@ void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, doub
 
 void loop()
 {
-    double dir = direction_class.get_direction();
+    dir::Tuple dir = direction_class.get_direction();
+
 
     //For loop timer
     //iters++;
 
-    motorControl(dir, -1, 1, 0.6);
-    PrintMotorSpeed(250, leftSpeed, rightSpeed, dir);
+    motorControl(dir);
+    PrintMotorSpeed(250, dir);
 }
