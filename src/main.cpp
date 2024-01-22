@@ -2,10 +2,10 @@
 #include <Arduino.h>
 
 int antallPins = 7;
-int sensorPins[7] = {13, 14, 15, 16, 17, 18, 19};
+int sensorPins[7] = {23, 22, 21, 20, 6, 4, 3};
+float prev_dir;
 
-
-int motorPins[2] = {5, 6};
+int motorPins[2] = {9, 10};
 
 #define motor1PWM motorPins[0]      // PWM Left Motor
 #define motor2PWM motorPins[1]      // PWM Right Motor
@@ -26,13 +26,12 @@ void setup()
     //Sensor
     for (int pin : sensorPins)
     {
-        pinMode(pin, OUTPUT);
+        pinMode(pin, INPUT);
     }
 
 }
 
 //MOTOR CODE
-
 // Function to control motors based on analog input and its range
 void motorControl(double analogValue, double minValue, double maxValue, double speedAdjust) {
     // Map analog value within the given range to PWM range (0 to 255)
@@ -99,7 +98,7 @@ float direction(const bool sensor_activations[], int antall_sensor) {
     int lower_bound = antall_sensor + 1;
     int upper_bound = 0;
 
-    for (int index = 0; index < antall_sensor; ++index) {
+    for (int index = 0; index < antall_sensor; index++) {
         if (sensor_activations[index]) {
             if (index > upper_bound) {
                 upper_bound = index;
@@ -115,7 +114,7 @@ float direction(const bool sensor_activations[], int antall_sensor) {
     float avg_bound = static_cast<float>(lower_bound + upper_bound) / 2.0f;
 
     // avg_bound er nå mellom [0, 1]
-    avg_bound /= static_cast<float>(antall_sensor);
+    avg_bound /= static_cast<float>(antall_sensor - 1);
 
     // avg_bound går nå fra -1 til 1
     avg_bound = avg_bound * 2 - 1;
@@ -125,21 +124,25 @@ float direction(const bool sensor_activations[], int antall_sensor) {
 
 void loop()
 {
-    motorControl(0.0, -1, 1, 0.0);
-    PrintMotorSpeed(250, leftSpeed, rightSpeed, 1.0, 0);
-    return;
-
     auto startTime = millis();
 
-    bool sensor_activations[5];
+    bool sensor_activations[7];
+    int sum = 0;
     for (int i = 0; i < antallPins; i++)
     {
-        sensor_activations[analogRead(sensorPins[i])];
+        sensor_activations[i] = digitalRead(sensorPins[i]);
+        sum += sensor_activations[i];
     }
 
-    float dir = direction(sensor_activations, antallPins);
+    float dir;
+    if ((sum == 0) || (sum == antallPins)) {
+        dir = prev_dir;
+    } else {
+        dir = direction(sensor_activations, antallPins);
+        prev_dir = dir;
+    }
 
-    motorControl(dir, -1.0, 1.0, 0.6);
+    motorControl(dir, -1.0, 1.0, 0.7);
 
     auto endTime = millis();
     PrintMotorSpeed(250, leftSpeed, rightSpeed, dir, endTime - startTime);
