@@ -4,6 +4,7 @@
 // #include <WiFi.h>
 // #include <ArduinoOTA.h>
 
+#include "MotorController.hpp"
 #include "PID.hpp"
 
 int antallPins = 7;
@@ -11,13 +12,7 @@ int sensorPins[7] = {23, 22, 21, 20, 6, 4, 3};
 float prev_dir;
 
 PID pid;
-
-int motorPins[2] = {8, 9};
-
-#define motor1PWM motorPins[0]      // PWM Left Motor
-#define motor2PWM motorPins[1]      // PWM Right Motor
-
-int leftSpeed, rightSpeed, steer_value_global;
+MotorController motorController{8, 9};
 
 void setup()
 {
@@ -37,81 +32,12 @@ void setup()
 
     ArduinoOTA.begin();*/
 
-    // Motor Output
-    for (int pin : motorPins)
-    {
-        pinMode(pin, OUTPUT);
-    }
-
     //Sensor
     for (int pin : sensorPins)
     {
         pinMode(pin, INPUT);
     }
 
-}
-
-//MOTOR CODE
-// Function to control motors based on analog input and its range
-void motorControl(double analogValue, double minValue, double maxValue, double speedAdjust) {
-    // Map analog value within the given range to PWM range (0 to 255)
-    //int steer_value = map(analogValue, minValue, maxValue, 0, 255);
-
-
-    double analog = max(minValue, min(analogValue, maxValue));
-    int steer_value = (analog - minValue) / (maxValue - minValue) * 255;
-    steer_value_global = steer_value;
-    //double steer_val_double = analogValue * 255;
-    //int steer_value = static_cast<int>(steer_val_double);
-
-    //Serial.println(steer_value);
-
-    // Apply the speed adjustment
-    if (steer_value > 128) {
-        // Steer right
-        leftSpeed = 255;
-        rightSpeed = (255 - steer_value) * 2;
-    } else if (steer_value < 128) {
-        // Steer left
-        leftSpeed = steer_value * 2;
-        rightSpeed = 255;
-    } else {
-        // No steering, both motors forward
-        leftSpeed = 255;
-        rightSpeed = 255;
-    }
-
-    leftSpeed = leftSpeed * speedAdjust;
-    rightSpeed = rightSpeed * speedAdjust;
-
-    // Set motor speeds using PWM
-    analogWrite(motor1PWM, leftSpeed);
-    analogWrite(motor2PWM, rightSpeed);
-}
-
-void PrintMotorSpeed(unsigned long interval, int leftSpeed, int rightSpeed, double inputRange, double loopTime)
-{
-    static unsigned long lastPrintTime = 0;
-    unsigned long currentTime = millis();
-
-    if (currentTime - lastPrintTime >= interval)
-    {
-
-        lastPrintTime = currentTime;
-
-        Serial.print("Analog Value: ");
-        Serial.print(inputRange);
-        Serial.print(" | Left Speed: ");
-        Serial.print(leftSpeed);
-        Serial.print(" | Right Speed: ");
-        Serial.print(rightSpeed);
-        Serial.print(" | Steer value: ");
-        Serial.print(steer_value_global);
-        Serial.print(" | Looptime: ");
-        Serial.print(" loopTime");
-
-        Serial.println();
-    }
 }
 
 float direction(const bool sensor_activations[], int antall_sensor) {
@@ -161,11 +87,13 @@ void loop()
         dir = prev_dir;
     } else {
         dir = direction(sensor_activations, antallPins);
+        // Must be updated to go from 0-300
         prev_dir = dir;
     }
 
-    motorControl(dir, -1.0, 1.0, 0.7);
+    motorController.motorControl(dir, 0.7);
 
     auto endTime = millis();
-    PrintMotorSpeed(250, leftSpeed, rightSpeed, dir, endTime - startTime);
+
+    motorController.PrintMotorSpeed(dir, endTime - startTime);
 }
