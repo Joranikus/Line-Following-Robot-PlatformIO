@@ -10,10 +10,8 @@ MotorController::MotorController(double minValue, double maxValue)
     motor1PWM = motorPins[0];
     motor2PWM = motorPins[1];
 
-    for (int pin : motorPins)
-    {
-        pinMode(pin, OUTPUT);
-    }
+    pinMode(motor1PWM, OUTPUT);
+    pinMode(motor2PWM, OUTPUT);
 }
 
 void MotorController::motorControl(double analogValue, double speedAdjust) {
@@ -44,11 +42,11 @@ void MotorController::motorControl(double analogValue, double speedAdjust) {
     rightSpeed = rightSpeed * speedAdjust;
 
     // Set motor speeds using PWM
-    analogWrite(motor1PWM, leftSpeed);
-    analogWrite(motor2PWM, rightSpeed);
+    digitalWrite(motor1PWM, leftSpeed);
+    digitalWrite(motor2PWM, rightSpeed);
 }
 
-void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) {
+void MotorController::PrintMotorSpeed(double currentDirection, double loopTime, HardwareSerial &serial) {
     static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
 
@@ -57,17 +55,17 @@ void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) 
 
         lastPrintTime = currentTime;
 
-        Serial.print("Analog Value: ");
-        Serial.print(currentDirection);
-        Serial.print(" | Left Speed: ");
-        Serial.print(leftSpeed);
-        Serial.print(" | Right Speed: ");
-        Serial.print(rightSpeed);
-        Serial.print(" | Steer value: ");
-        Serial.print(steerValue);
-        Serial.print(" | Looptime: ");
-        Serial.print(loopTime);
+        serial.print("Analog Value: ");
+        serial.print(currentDirection);
+        serial.print(" | Left Speed: ");
+        serial.print(leftSpeed);
+        serial.print(" | Right Speed: ");
+        serial.print(rightSpeed);
+        serial.print(" | Steer value: ");
+        serial.print(steerValue);
+        serial.print(" | Looptime: ");
+        serial.print(loopTime);
 
-        Serial.println();
+        serial.println();
     }
 }

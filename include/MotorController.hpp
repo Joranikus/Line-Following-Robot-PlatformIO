@@ -9,15 +9,15 @@ class MotorController {
 public:
     MotorController(double minValue, double maxValue);
     void motorControl(double analogValue, double speedAdjust);
-    void PrintMotorSpeed(double currentDirection, double loopTime);
+    void PrintMotorSpeed(double currentDirection, double loopTime, HardwareSerial &serial);
 
 private:
-    int motorPins[2] = {8, 9};
+    int motorPins[2] = {25, 26};
     int motor1PWM;
     int motor2PWM;
 
-    double minValue;
-    double maxValue;
+    double minValue = 0;
+    double maxValue = 300;
 
     double steerValue = 0;
 
