@@ -8,16 +8,18 @@
 #include "PID.hpp"
 
 int antallPins = 7;
-int sensorPins[7] = {23, 22, 21, 20, 6, 4, 3};
+int sensorPins[7] = {22, 23, 16, 17, 5, 18, 21};
 float prev_dir;
 
 PID pid;
-MotorController motorController{8, 9};
+MotorController motorController{0, 300};
 
 void setup()
 {
     // Activates serial
     Serial.begin(9600);
+    Serial.println();
+    Serial.println("Setup complete.");
 
     /*WiFi.begin("eduroam", "");
 
@@ -31,12 +33,6 @@ void setup()
     Serial.println("Connected!");
 
     ArduinoOTA.begin();*/
-
-    //Sensor
-    for (int pin : sensorPins)
-    {
-        pinMode(pin, INPUT);
-    }
 
 }
 
@@ -62,8 +58,8 @@ float direction(const bool sensor_activations[], int antall_sensor) {
     // avg_bound er nå mellom [0, 1]
     avg_bound /= static_cast<float>(antall_sensor - 1);
 
-    // avg_bound går nå fra -1 til 1
-    avg_bound = avg_bound * 2 - 1;
+    // avg_bound går nå fra 0 til 300
+    avg_bound = avg_bound * 300;
 
     return avg_bound;
 }
@@ -80,14 +76,20 @@ void loop()
     {
         sensor_activations[i] = digitalRead(sensorPins[i]);
         sum += sensor_activations[i];
+
+        // Test sensors
+        // Serial.print(digitalRead(sensorPins[i]));
+        // Serial.print(" | ");
     }
+
+    // Test sensors
+    // Serial.println();
 
     float dir;
     if ((sum == 0) || (sum == antallPins)) {
         dir = prev_dir;
     } else {
         dir = direction(sensor_activations, antallPins);
-        // Must be updated to go from 0-300
         prev_dir = dir;
     }
 
@@ -95,5 +97,9 @@ void loop()
 
     auto endTime = millis();
 
-    motorController.PrintMotorSpeed(dir, endTime - startTime);
+    /*Serial.print("Loop done in ");
+    Serial.print(endTime - startTime);
+    Serial.println(" milliseconds.");*/
+
+    motorController.PrintMotorSpeed(dir, endTime - startTime, Serial);
 }
