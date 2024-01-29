@@ -1,11 +1,15 @@
 
 #include <Arduino.h>
 
+#include "PID.hpp"
+
 int antallPins = 7;
 int sensorPins[7] = {23, 22, 21, 20, 6, 4, 3};
 float prev_dir;
 
-int motorPins[2] = {9, 10};
+PID pid;
+
+int motorPins[2] = {8, 9};
 
 #define motor1PWM motorPins[0]      // PWM Left Motor
 #define motor2PWM motorPins[1]      // PWM Right Motor
