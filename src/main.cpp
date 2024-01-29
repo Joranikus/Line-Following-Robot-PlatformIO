@@ -1,6 +1,9 @@
 
 #include <Arduino.h>
 
+// #include <WiFi.h>
+// #include <ArduinoOTA.h>
+
 #include "PID.hpp"
 
 int antallPins = 7;
@@ -20,6 +23,19 @@ void setup()
 {
     // Activates serial
     Serial.begin(9600);
+
+    /*WiFi.begin("eduroam", "");
+
+    Serial.print("Connecting..");
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(5000);
+        Serial.print(".");
+    }
+
+    Serial.println();
+    Serial.println("Connected!");
+
+    ArduinoOTA.begin();*/
 
     // Motor Output
     for (int pin : motorPins)
@@ -128,6 +144,8 @@ float direction(const bool sensor_activations[], int antall_sensor) {
 
 void loop()
 {
+    // ArduinoOTA.handle();
+
     auto startTime = millis();
 
     bool sensor_activations[7];
