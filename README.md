@@ -6,8 +6,10 @@ This project blah blah lorem ipsum
 #### TODO
 * Tune pid-controller
 * Implementer enkoder (Ørjan)
-* Motorsignal (sende signal til motorer)
 * Motorkontroller (koble sammen enkoder, pid, motorsignal)
+
+#### DONE
+* Implementere MotorSignal
 
 Motorsignal class is responsible for sending signal to right pin, and making sure it is a valid pwm value.
 
