@@ -15,12 +15,6 @@ namespace dir {
             sensorPins[i] = pins[i];
             outPins[i] = 0;
         }
-
-        for (int pin : sensorPins)
-        {
-            pinMode(pin, INPUT);
-        }
-
     }
 
     double DirectionClass::get_direction() {
