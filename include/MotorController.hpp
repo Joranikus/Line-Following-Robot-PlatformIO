@@ -9,7 +9,7 @@ class MotorController {
 public:
     MotorController(double minValue, double maxValue);
     void motorControl(double analogValue, double speedAdjust);
-    void PrintMotorSpeed(double currentDirection, double loopTime, HardwareSerial &serial);
+    void PrintMotorSpeed(double currentDirection, double loopTime);
 
 private:
     int motorPins[2] = {25, 26};

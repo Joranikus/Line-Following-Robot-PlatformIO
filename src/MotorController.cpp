@@ -46,7 +46,7 @@ void MotorController::motorControl(double analogValue, double speedAdjust) {
     digitalWrite(motor2PWM, rightSpeed);
 }
 
-void MotorController::PrintMotorSpeed(double currentDirection, double loopTime, HardwareSerial &serial) {
+void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) {
     static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
 
@@ -55,17 +55,17 @@ void MotorController::PrintMotorSpeed(double currentDirection, double loopTime, 
 
         lastPrintTime = currentTime;
 
-        serial.print("Analog Value: ");
-        serial.print(currentDirection);
-        serial.print(" | Left Speed: ");
-        serial.print(leftSpeed);
-        serial.print(" | Right Speed: ");
-        serial.print(rightSpeed);
-        serial.print(" | Steer value: ");
-        serial.print(steerValue);
-        serial.print(" | Looptime: ");
-        serial.print(loopTime);
+        Serial.print("Analog Value: ");
+        Serial.print(currentDirection);
+        Serial.print(" | Left Speed: ");
+        Serial.print(leftSpeed);
+        Serial.print(" | Right Speed: ");
+        Serial.print(rightSpeed);
+        Serial.print(" | Steer value: ");
+        Serial.print(steerValue);
+        Serial.print(" | Looptime: ");
+        Serial.print(loopTime);
 
-        serial.println();
+        Serial.println();
     }
 }
