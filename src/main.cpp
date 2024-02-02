@@ -16,24 +16,9 @@ MotorController motorController{0, 300};
 
 void setup()
 {
-    // Activates serial
     Serial.begin(9600);
     Serial.println();
     Serial.println("Setup complete.");
-
-    /*WiFi.begin("eduroam", "");
-
-    Serial.print("Connecting..");
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(5000);
-        Serial.print(".");
-    }
-
-    Serial.println();
-    Serial.println("Connected!");
-
-    ArduinoOTA.begin();*/
-
 }
 
 float direction(const bool sensor_activations[], int antall_sensor) {
@@ -66,8 +51,6 @@ float direction(const bool sensor_activations[], int antall_sensor) {
 
 void loop()
 {
-    // ArduinoOTA.handle();
-
     auto startTime = millis();
 
     bool sensor_activations[7];
@@ -77,13 +60,7 @@ void loop()
         sensor_activations[i] = digitalRead(sensorPins[i]);
         sum += sensor_activations[i];
 
-        // Test sensors
-        // Serial.print(digitalRead(sensorPins[i]));
-        // Serial.print(" | ");
     }
-
-    // Test sensors
-    // Serial.println();
 
     float dir;
     if ((sum == 0) || (sum == antallPins)) {
@@ -97,9 +74,5 @@ void loop()
 
     auto endTime = millis();
 
-    /*Serial.print("Loop done in ");
-    Serial.print(endTime - startTime);
-    Serial.println(" milliseconds.");*/
-
-    motorController.PrintMotorSpeed(dir, endTime - startTime, Serial);
+    motorController.PrintMotorSpeed(dir, endTime - startTime);
 }
