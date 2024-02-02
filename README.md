@@ -18,3 +18,7 @@ Pid class is responsible for adjusting the output value.
 The direction class is responisible for converting the sensor inputs to outeput direction.
 
 The motorcontroller class is responsible for combining the direction, pid, and enkoder.
+
+#### Notes for testing
+* Make sure left motor in real life is left motor in code, easy to switch up left and right (remember to check pins too!)
+* 
