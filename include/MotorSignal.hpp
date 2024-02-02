@@ -5,9 +5,22 @@
 #ifndef LINE_FOLLOWING_ROBOT_PLATFORMIO_MOTORSIGNAL_HPP
 #define LINE_FOLLOWING_ROBOT_PLATFORMIO_MOTORSIGNAL_HPP
 
+struct Tuple {
+    int left;
+    int right;
+};
 
 class MotorSignal {
+public:
+    void sendSignal(double shifted);
+    void sendSignal(int left, int right);
+    Tuple convertShiftedToPWM(double shifted, double speedAdjust = 1.0);
+private:
+    int motorPWM0 = 25;
+    int motorPWM1 = 26;
 
+    double minValue = 0.0;
+    double maxValue = 300.0;
 };
 
 
