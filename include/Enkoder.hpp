@@ -1,0 +1,14 @@
+//
+// Created by Øystein Bringsli.
+//
+
+#ifndef LINE_FOLLOWING_ROBOT_PLATFORMIO_ENKODER_HPP
+#define LINE_FOLLOWING_ROBOT_PLATFORMIO_ENKODER_HPP
+
+
+class Enkoder {
+
+};
+
+
+#endif //LINE_FOLLOWING_ROBOT_PLATFORMIO_ENKODER_HPP
