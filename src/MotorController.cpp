@@ -7,8 +7,6 @@
 
 MotorController::MotorController(double minValue, double maxValue)
     : minValue(minValue), maxValue(maxValue) {
-    motor1PWM = motorPins[0];
-    motor2PWM = motorPins[1];
 
     pinMode(motor1PWM, OUTPUT);
     pinMode(motor2PWM, OUTPUT);

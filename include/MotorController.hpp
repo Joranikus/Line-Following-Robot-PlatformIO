@@ -12,9 +12,8 @@ public:
     void PrintMotorSpeed(double currentDirection, double loopTime) const;
 
 private:
-    int motorPins[2] = {25, 26};
-    int motor1PWM;
-    int motor2PWM;
+    int motor1PWM = 25;
+    int motor2PWM = 26;
 
     double minValue = 0;
     double maxValue = 300;
