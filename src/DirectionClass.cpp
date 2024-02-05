@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include "DirectionClass.hpp"
 
-DirectionClass::DirectionClass(const int pins[], int antallPins)
+DirectionClass::DirectionClass(const int *pins, int antallPins)
 : antallPins(antallPins), sensorPins(), outPins() {
     /*Init a class to keep track of previous positions, and outputs new position.*/
 
