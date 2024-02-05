@@ -63,7 +63,7 @@ void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) 
         Serial.print(rightSpeed);
         Serial.print(" | Steer value: ");
         Serial.print(steerValue);
-        Serial.print(" | Looptime: ");
+        Serial.print(" | Loop-time: ");
         Serial.print(loopTime);
 
         Serial.println();
