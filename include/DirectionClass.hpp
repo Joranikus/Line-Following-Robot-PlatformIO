@@ -7,25 +7,21 @@
 
 #include <Arduino.h>
 
-namespace dir {
+class DirectionClass {
+public:
+    explicit DirectionClass(const int *pins, int antallPins);
+    double get_direction();
 
-    class DirectionClass {
-    public:
-        explicit DirectionClass(const int *pins, int antallPins);
-        double get_direction();
+private:
 
-    private:
+    static int arr_sum(const int* inPins, int size);
+    double this_direction();
 
-        static int arr_sum(const int* inPins, int size);
-        double this_direction();
-
-        int antallPins;
-        int sensorPins[7];
-        int outPins[7];
-        void readSensorPins();
-        double prev_direction = 0.0;
-    };
-
-} // dir
+    int antallPins;
+    int sensorPins[7]{};
+    int outPins[7]{};
+    void readSensorPins();
+    double prev_direction = 0.0;
+};
 
 #endif //LINE_FOLLOWING_ROBOT_PLATFORMIO_DIRECTIONCLASS_HPP
