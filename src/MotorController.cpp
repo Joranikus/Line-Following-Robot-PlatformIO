@@ -6,7 +6,7 @@
 #include "MotorController.hpp"
 
 double clamp(double val, double minValue, double maxValue) {
-    return std::max(maxValue, std::min(minValue, val));
+    return std::max(minValue, std::min(maxValue, val));
 }
 
 MotorController::MotorController(double minValue, double maxValue)
@@ -18,18 +18,20 @@ MotorController::MotorController(double minValue, double maxValue)
 
 void MotorController::motorControl(double analogValue, double speedAdjust) {
     double analog = clamp(analogValue, minValue, maxValue);
-    steerValue = static_cast<int>((analog - minValue) / (maxValue - minValue) * 255); //PWM uses 255
+    steerValue = ((analog - minValue) / (maxValue - minValue)) * 255.0; //PWM uses 255
 
-    leftSpeed = (steerValue > 128) ? 255 * speedAdjust : steerValue * 2 * speedAdjust;
-    rightSpeed = (steerValue <128) ? 255 * speedAdjust : (steerValue - maxValue) * 2 * speedAdjust;
+    leftSpeed = (steerValue > 128.0) ? 255.0 * speedAdjust : steerValue * 2.0 * speedAdjust;
+    rightSpeed = (steerValue < 128.0) ? 255.0 * speedAdjust : (255.0 - steerValue) * 2.0 * speedAdjust;
 
     // Set motor speeds using PWM
     sendSignal();
 }
 
 void MotorController::sendSignal() const {
-    digitalWrite(motor1PWM, static_cast<int>(leftSpeed));
-    digitalWrite(motor2PWM, static_cast<int>(rightSpeed));
+    ledcWrite(0, static_cast<int>(leftSpeed));
+    ledcWrite(1, static_cast<int>(rightSpeed));
+    //digitalWrite(motor1PWM, static_cast<int>(leftSpeed));
+    //digitalWrite(motor2PWM, static_cast<int>(rightSpeed));
 }
 
 void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) const {
@@ -38,7 +40,6 @@ void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) 
 
     if (currentTime - lastPrintTime >= printInterval)
     {
-
         lastPrintTime = currentTime;
 
         Serial.print("Analog Value: ");
