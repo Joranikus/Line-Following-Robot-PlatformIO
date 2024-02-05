@@ -27,7 +27,7 @@ void MotorSignal::sendSignal(int left, int right) const {
     digitalWrite(motorPWM1, right);
 }
 
-void MotorSignal::sendSignal(double shifted) {
+void MotorSignal::sendSignal(double shifted) const {
     auto motorValues = convertShiftedToPWM(shifted);
     sendSignal(motorValues.left, motorValues.right);
 }
