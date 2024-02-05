@@ -18,34 +18,6 @@ void setup()
     Serial.println("Setup complete.");
 }
 
-float direction(const bool sensor_activations[], int antall_sensor) {
-    int lower_bound = antall_sensor + 1;
-    int upper_bound = 0;
-
-    for (int index = 0; index < antall_sensor; index++) {
-        if (sensor_activations[index]) {
-            if (index > upper_bound) {
-                upper_bound = index;
-            }
-
-            if (index < lower_bound) {
-                lower_bound = index;
-            }
-        }
-    }
-
-    // avg_bound vil nå være en float mellom 0 og sensor_activations.size()
-    float avg_bound = static_cast<float>(lower_bound + upper_bound) / 2.0f;
-
-    // avg_bound er nå mellom [0, 1]
-    avg_bound /= static_cast<float>(antall_sensor - 1);
-
-    // avg_bound går nå fra 0 til 300
-    avg_bound = avg_bound * 300;
-
-    return avg_bound;
-}
-
 void loop()
 {
     auto startTime = millis();
