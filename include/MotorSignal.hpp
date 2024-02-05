@@ -13,8 +13,8 @@ struct Tuple {
 class MotorSignal {
 public:
     void sendSignal(double shifted);
-    void sendSignal(int left, int right);
-    Tuple convertShiftedToPWM(double shifted, double speedAdjust = 1.0);
+    void sendSignal(int left, int right) const;
+    Tuple convertShiftedToPWM(double shifted, double speedAdjust = 1.0) const;
 private:
     int motorPWM0 = 25;
     int motorPWM1 = 26;
