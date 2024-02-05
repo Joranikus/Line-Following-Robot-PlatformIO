@@ -15,8 +15,8 @@ MotorController::MotorController(double minValue, double maxValue)
 }
 
 void MotorController::motorControl(double analogValue, double speedAdjust) {
-    double analog = max(minValue, min(analogValue, maxValue));
-    int steer_value = (analog - minValue) / (maxValue - minValue) * 255;
+    auto analog = max(minValue, min(analogValue, maxValue));
+    auto steer_value = (analog - minValue) / (maxValue - minValue) * 255;
     steerValue = steer_value;
     //double steer_val_double = analogValue * 255;
     //int steer_value = static_cast<int>(steer_val_double);
@@ -42,11 +42,11 @@ void MotorController::motorControl(double analogValue, double speedAdjust) {
     rightSpeed = rightSpeed * speedAdjust;
 
     // Set motor speeds using PWM
-    digitalWrite(motor1PWM, leftSpeed);
-    digitalWrite(motor2PWM, rightSpeed);
+    digitalWrite(motor1PWM, static_cast<int>(leftSpeed));
+    digitalWrite(motor2PWM, static_cast<int>(rightSpeed));
 }
 
-void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) {
+void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) const {
     static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
 

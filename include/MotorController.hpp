@@ -9,7 +9,7 @@ class MotorController {
 public:
     MotorController(double minValue, double maxValue);
     void motorControl(double analogValue, double speedAdjust);
-    void PrintMotorSpeed(double currentDirection, double loopTime);
+    void PrintMotorSpeed(double currentDirection, double loopTime) const;
 
 private:
     int motorPins[2] = {25, 26};
@@ -22,8 +22,8 @@ private:
     double steerValue = 0;
 
     int printInterval = 1000;
-    int leftSpeed = 0;
-    int rightSpeed = 0;
+    double leftSpeed = 0;
+    double rightSpeed = 0;
 };
 
 
