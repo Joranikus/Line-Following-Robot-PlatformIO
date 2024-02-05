@@ -7,7 +7,8 @@
 
 
 class Tests {
-
+public:
+    void printSensors(const int *pins, const int numPins);
 };
 
 
