@@ -5,13 +5,12 @@
 #include "MotorController.hpp"
 #include "PID.hpp"
 
-int antallPins = 7;
+int numSensorPins = 7;
 int sensorPins[7] = {22, 23, 16, 17, 5, 18, 21};
 
-
-DirectionClass directionClass{sensorPins, antallPins};
-PID pid;
+DirectionClass directionClass{sensorPins, numSensorPins};
 MotorController motorController{0, 300};
+PID pid;
 
 void setup()
 {
