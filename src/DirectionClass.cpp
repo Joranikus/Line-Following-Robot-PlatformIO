@@ -39,7 +39,7 @@ double DirectionClass::this_direction() {
     if ((as == 0) or (as == antallPins)) {return prev_direction;}
 
     //Sets the upper and lower bound to the edges.
-    int minIx = antallPins;
+    int minIx = antallPins + 1;
     int maxIx = -1;
 
     //Updates the upper and lower bound based on pin state.
@@ -62,4 +62,6 @@ void DirectionClass::readSensorPins() {
     {
         outPins[i] = digitalRead(sensorPins[i]);
     }
+
+    outPins[4] = 0;
 }
