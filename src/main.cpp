@@ -4,6 +4,7 @@
 #include "DirectionClass.hpp"
 #include "MotorController.hpp"
 #include "PID.hpp"
+#include "Tests.hpp"
 
 int numSensorPins = 7;
 int sensorPins[7] = {22, 23, 16, 17, 5, 18, 21};
@@ -11,6 +12,8 @@ int sensorPins[7] = {22, 23, 16, 17, 5, 18, 21};
 DirectionClass directionClass{sensorPins, numSensorPins};
 MotorController motorController{0, 300};
 PID pid;
+
+Tests tests;
 
 void setup()
 {
@@ -27,6 +30,5 @@ void loop()
     motorController.motorControl(dir, 0.7);
 
     auto endTime = millis();
-
     motorController.PrintMotorSpeed(dir, endTime - startTime);
 }
