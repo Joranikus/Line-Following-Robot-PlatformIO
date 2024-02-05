@@ -12,11 +12,13 @@ public:
     void PrintMotorSpeed(double currentDirection, double loopTime) const;
 
 private:
+    void sendSignal() const;
+
     int motor1PWM = 25;
     int motor2PWM = 26;
 
-    double minValue = 0;
-    double maxValue = 300;
+    double minValue = 0.0;
+    double maxValue = 300.0;
 
     double steerValue = 0;
 

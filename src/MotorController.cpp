@@ -5,6 +5,10 @@
 #include <Arduino.h>
 #include "MotorController.hpp"
 
+double clamp(double val, double minValue, double maxValue) {
+    return std::max(maxValue, std::min(minValue, val));
+}
+
 MotorController::MotorController(double minValue, double maxValue)
     : minValue(minValue), maxValue(maxValue) {
 
@@ -13,33 +17,17 @@ MotorController::MotorController(double minValue, double maxValue)
 }
 
 void MotorController::motorControl(double analogValue, double speedAdjust) {
-    auto analog = max(minValue, min(analogValue, maxValue));
-    auto steer_value = (analog - minValue) / (maxValue - minValue) * 255;
-    steerValue = steer_value;
-    //double steer_val_double = analogValue * 255;
-    //int steer_value = static_cast<int>(steer_val_double);
+    double analog = clamp(analogValue, minValue, maxValue);
+    steerValue = static_cast<int>((analog - minValue) / (maxValue - minValue) * 255); //PWM uses 255
 
-    //Serial.println(steer_value);
-
-    // Apply the speed adjustment
-    if (steer_value > 128) {
-        // Steer right
-        leftSpeed = 255;
-        rightSpeed = (255 - steer_value) * 2;
-    } else if (steer_value < 128) {
-        // Steer left
-        leftSpeed = steer_value * 2;
-        rightSpeed = 255;
-    } else {
-        // No steering, both motors forward
-        leftSpeed = 255;
-        rightSpeed = 255;
-    }
-
-    leftSpeed = leftSpeed * speedAdjust;
-    rightSpeed = rightSpeed * speedAdjust;
+    leftSpeed = (steerValue > 128) ? 255 * speedAdjust : steerValue * 2 * speedAdjust;
+    rightSpeed = (steerValue <128) ? 255 * speedAdjust : (steerValue - maxValue) * 2 * speedAdjust;
 
     // Set motor speeds using PWM
+    sendSignal();
+}
+
+void MotorController::sendSignal() const {
     digitalWrite(motor1PWM, static_cast<int>(leftSpeed));
     digitalWrite(motor2PWM, static_cast<int>(rightSpeed));
 }
