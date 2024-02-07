@@ -11,7 +11,7 @@ int sensorPins[7] = {22, 23, 16, 17, 5, 18, 21};
 
 DirectionClass directionClass{sensorPins, numSensorPins};
 MotorController motorController{0, 300};
-PID pid;
+PID pid{150, 1.0, 0.9, 0.0};
 
 Tests tests;
 
@@ -34,11 +34,12 @@ void loop()
 {
     auto startTime = millis();
 
-    auto dir = directionClass.get_direction();
-    motorController.motorControl(dir, 1.0);
+    auto dirWithoutPid = directionClass.get_direction();
+    auto dir = MotorController::clamp(pid.output(dirWithoutPid), 0, 300);
+    motorController.motorControl(dir, 0.85);
 
     auto endTime = millis();
-    motorController.PrintMotorSpeed(dir, endTime - startTime);
+    motorController.PrintMotorSpeed(dir, endTime - startTime, dirWithoutPid);
 
     auto currentTime = millis();
     if (currentTime > (lastPrintTime + 500)) {
