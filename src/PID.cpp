@@ -24,5 +24,8 @@ double PID::output(double input) {
     // else if output < min_output:
     // output = min_output
 
-    return output;
+    return setPoint - output;
 }
+
+PID::PID(double setPoint, double Kp, double Kd, double Ki)
+    : setPoint(setPoint), Kp(Kp), Kd(Kd), Ki(Ki) {}

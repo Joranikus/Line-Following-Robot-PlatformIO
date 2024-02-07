@@ -9,6 +9,8 @@
 class PID {
 
 public:
+    PID(double setPoint = 0, double Kp = 0, double Kd = 0, double Ki = 0);
+
     double Kp;
     double Ki;
     double Kd;
@@ -16,7 +18,7 @@ public:
     double prev_error = 0;
     double integral = 0;
 
-    double setPoint = 0;
+    double setPoint;
 
     double output(double input);
 
