@@ -62,6 +62,4 @@ void DirectionClass::readSensorPins() {
     {
         outPins[i] = digitalRead(sensorPins[i]);
     }
-
-    outPins[4] = 0;
 }
