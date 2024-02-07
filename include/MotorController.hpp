@@ -9,7 +9,8 @@ class MotorController {
 public:
     MotorController(double minValue, double maxValue);
     void motorControl(double analogValue, double speedAdjust);
-    void PrintMotorSpeed(double currentDirection, double loopTime) const;
+    void PrintMotorSpeed(double currentDirection, double loopTime, double dirWithoutPid) const;
+    static double clamp(double val, double minValue, double maxValue);
 
 private:
     void sendSignal() const;

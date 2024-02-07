@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include "MotorController.hpp"
 
-double clamp(double val, double minValue, double maxValue) {
+double MotorController::clamp(double val, double minValue, double maxValue) {
     return std::max(minValue, std::min(maxValue, val));
 }
 
@@ -34,7 +34,7 @@ void MotorController::sendSignal() const {
     //digitalWrite(motor2PWM, static_cast<int>(rightSpeed));
 }
 
-void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) const {
+void MotorController::PrintMotorSpeed(double currentDirection, double loopTime, double dirWithoutPid) const {
     static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
 
@@ -44,6 +44,8 @@ void MotorController::PrintMotorSpeed(double currentDirection, double loopTime) 
 
         Serial.print("Analog Value: ");
         Serial.print(currentDirection);
+        Serial.print(" | Without pid: ");
+        Serial.print(dirWithoutPid);
         Serial.print(" | Left Speed: ");
         Serial.print(leftSpeed);
         Serial.print(" | Right Speed: ");
