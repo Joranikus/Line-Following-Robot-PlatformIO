@@ -4,9 +4,14 @@
 #include "MotorController.hpp"
 #include "PID.hpp"
 #include "Tests.hpp"
+#include "BatteryManager.hpp"
 
 int num_sensor_pins = 7;
 int sensor_pins[7] = {22, 23, 16, 17, 5, 18, 21};
+
+int yellow_light_pin = 4;
+int green_led_pin = 2;
+int red_led_pin = 15;
 
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
