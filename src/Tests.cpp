@@ -1,23 +1,15 @@
-//
-// Created by Øystein Bringsli.
-//
 
 #include <Arduino.h>
-
 #include "Tests.hpp"
 
-void Tests::printSensors(const int *pins, const int numPins) {
-    for (int ix = 0; ix < numPins; ix++)
+void Tests::print_sensors(const int *pins, const int num_pins) {
+    for (int ix = 0; ix < num_pins; ix++)
     {
-        //Pin 4 is turned off!!!!
-
         Serial.print(digitalRead(pins[ix]));
 
-        if (ix + 1 < numPins) {
+        if (ix + 1 < num_pins) {
             Serial.print("|");
         }
-
-        //Pin 4 is turned off!!!!
     }
 
     Serial.println();

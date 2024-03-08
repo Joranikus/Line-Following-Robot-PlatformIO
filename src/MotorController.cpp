@@ -1,59 +1,56 @@
-//
-// Created by Øystein Bringsli.
-//
 
 #include <Arduino.h>
 #include "MotorController.hpp"
 
-double MotorController::clamp(double val, double minValue, double maxValue) {
-    return std::max(minValue, std::min(maxValue, val));
+double MotorController::clamp(double val, double min_value, double max_value) {
+    return std::max(min_value, std::min(max_value, val));
 }
 
-MotorController::MotorController(double minValue, double maxValue)
-    : minValue(minValue), maxValue(maxValue) {
+MotorController::MotorController(double min_value, double max_value)
+    : min_value(min_value), max_value(max_value) {
 
     pinMode(motor1PWM, OUTPUT);
     pinMode(motor2PWM, OUTPUT);
 }
 
-void MotorController::motorControl(double analogValue, double speedAdjust) {
-    double analog = clamp(analogValue, minValue, maxValue);
-    steerValue = ((analog - minValue) / (maxValue - minValue)) * 255.0; //PWM uses 255
+void MotorController::motor_control(double analog_value, double speed_adjust) {
+    double analog = clamp(analog_value, min_value, max_value);
+    steer_value = ((analog - min_value) / (max_value - min_value)) * 255.0; //PWM uses 255
 
-    leftSpeed = (steerValue > 128.0) ? 255.0 * speedAdjust : steerValue * 2.0 * speedAdjust;
-    rightSpeed = (steerValue < 128.0) ? 255.0 * speedAdjust : (255.0 - steerValue) * 2.0 * speedAdjust;
+    left_speed = (steer_value > 128.0) ? 255.0 * speed_adjust : steer_value * 2.0 * speed_adjust;
+    right_speed = (steer_value < 128.0) ? 255.0 * speed_adjust : (255.0 - steer_value) * 2.0 * speed_adjust;
 
     // Set motor speeds using PWM
-    sendSignal();
+    send_signal();
 }
 
-void MotorController::sendSignal() const {
-    ledcWrite(0, static_cast<int>(leftSpeed));
-    ledcWrite(1, static_cast<int>(rightSpeed));
-    //digitalWrite(motor1PWM, static_cast<int>(leftSpeed));
-    //digitalWrite(motor2PWM, static_cast<int>(rightSpeed));
+void MotorController::send_signal() const {
+    ledcWrite(0, static_cast<int>(left_speed));
+    ledcWrite(1, static_cast<int>(right_speed));
+    //digitalWrite(motor1PWM, static_cast<int>(left_speed));
+    //digitalWrite(motor2PWM, static_cast<int>(right_speed));
 }
 
-void MotorController::PrintMotorSpeed(double currentDirection, double loopTime, double dirWithoutPid) const {
-    static unsigned long lastPrintTime = 0;
-    unsigned long currentTime = millis();
+void MotorController::print_motor_speed(double current_direction, double loop_time, double dir_without_pid) const {
+    static unsigned long last_print_time = 0;
+    unsigned long current_time = millis();
 
-    if (currentTime - lastPrintTime >= printInterval)
+    if (current_time - last_print_time >= print_interval)
     {
-        lastPrintTime = currentTime;
+        last_print_time = current_time;
 
         Serial.print("Analog Value: ");
-        Serial.print(currentDirection);
+        Serial.print(current_direction);
         Serial.print(" | Without pid: ");
-        Serial.print(dirWithoutPid);
+        Serial.print(dir_without_pid);
         Serial.print(" | Left Speed: ");
-        Serial.print(leftSpeed);
+        Serial.print(left_speed);
         Serial.print(" | Right Speed: ");
-        Serial.print(rightSpeed);
+        Serial.print(right_speed);
         Serial.print(" | Steer value: ");
-        Serial.print(steerValue);
+        Serial.print(steer_value);
         Serial.print(" | Loop-time: ");
-        Serial.print(loopTime);
+        Serial.print(loop_time);
 
         Serial.println();
     }

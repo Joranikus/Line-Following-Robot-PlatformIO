@@ -1,6 +1,3 @@
-//
-// Created by Øystein Bringsli.
-//
 
 #ifndef LINEFOLLOWINGROBOT_TESTS_HPP
 #define LINEFOLLOWINGROBOT_TESTS_HPP
@@ -8,7 +5,7 @@
 
 class Tests {
 public:
-    void printSensors(const int *pins, const int numPins);
+    void print_sensors(const int *pins, const int num_pins);
 };
 
 

@@ -4,8 +4,11 @@
 
 #include "PID.hpp"
 
+PID::PID(double set_point, double Kp, double Kd, double Ki)
+        : set_point(set_point), Kp(Kp), Kd(Kd), Ki(Ki) {}
+
 double PID::output(double input) {
-    auto error = setPoint - input;
+    auto error = set_point - input;
 
     auto prop = error * Kp;
 
@@ -24,8 +27,5 @@ double PID::output(double input) {
     // else if output < min_output:
     // output = min_output
 
-    return setPoint - output;
+    return set_point - output;
 }
-
-PID::PID(double setPoint, double Kp, double Kd, double Ki)
-    : setPoint(setPoint), Kp(Kp), Kd(Kd), Ki(Ki) {}
