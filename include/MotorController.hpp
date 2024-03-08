@@ -6,8 +6,10 @@ class MotorController {
 public:
     MotorController(double min_value, double max_value);
     void motor_control(double analog_value, double speed_adjust);
-    void print_motor_speed(double current_direction, double loop_time, double dir_without_pid) const;
     static double clamp(double val, double min_value, double max_value);
+    double get_left_speed();
+    double get_right_speed();
+    double get_steer_value();
 
 private:
     void send_signal() const;
@@ -20,7 +22,6 @@ private:
 
     double steer_value = 0;
 
-    int print_interval = 1000;
     double left_speed = 0;
     double right_speed = 0;
 };

@@ -1,16 +1,48 @@
-
 #include <Arduino.h>
 #include "Tests.hpp"
+#include "MotorController.hpp"
 
-void Tests::print_sensors(const int *pins, const int num_pins) {
-    for (int ix = 0; ix < num_pins; ix++)
-    {
-        Serial.print(digitalRead(pins[ix]));
+void Tests::print_sensors(int *pins, int num_pins, int print_delay) const {
+    static unsigned long last_print_time = 0;
+    unsigned long current_time = millis();
 
-        if (ix + 1 < num_pins) {
-            Serial.print("|");
+    // Check if enough time has elapsed since the last print
+    if (current_time - last_print_time >= print_delay) {
+        for (int ix = 0; ix < num_pins; ix++)
+        {
+            Serial.print(digitalRead(pins[ix]));
+
+            if (ix + 1 < num_pins) {
+                Serial.print("|");
+            }
         }
-    }
 
-    Serial.println();
+        Serial.println();
+
+        // Update the last print time
+        last_print_time = current_time;
+    }
+}
+
+void Tests::print_motor_speed(MotorController& motor_controller, double dir_without_pid, double current_direction, int print_delay) const {
+    static unsigned long last_print_time = 0;
+    unsigned long current_time = millis();
+
+    // Check if enough time has elapsed since the last print
+    if (current_time - last_print_time >= print_delay) {
+        Serial.print("Analog Value: ");
+        Serial.print(current_direction);
+        Serial.print(" | Without pid: ");
+        Serial.print(dir_without_pid);
+        Serial.print(" | Left Speed: ");
+        Serial.print(motor_controller.get_left_speed());
+        Serial.print(" | Right Speed: ");
+        Serial.print(motor_controller.get_right_speed());
+        Serial.print(" | Steer value: ");
+        Serial.print(motor_controller.get_steer_value());
+        Serial.println();
+
+        // Update the last print time
+        last_print_time = current_time;
+    }
 }

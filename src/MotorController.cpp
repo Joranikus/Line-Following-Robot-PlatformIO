@@ -31,27 +31,14 @@ void MotorController::send_signal() const {
     //digitalWrite(motor2PWM, static_cast<int>(right_speed));
 }
 
-void MotorController::print_motor_speed(double current_direction, double loop_time, double dir_without_pid) const {
-    static unsigned long last_print_time = 0;
-    unsigned long current_time = millis();
+double MotorController::get_left_speed() {
+    return left_speed;
+}
 
-    if (current_time - last_print_time >= print_interval)
-    {
-        last_print_time = current_time;
+double MotorController::get_right_speed() {
+    return right_speed;
+}
 
-        Serial.print("Analog Value: ");
-        Serial.print(current_direction);
-        Serial.print(" | Without pid: ");
-        Serial.print(dir_without_pid);
-        Serial.print(" | Left Speed: ");
-        Serial.print(left_speed);
-        Serial.print(" | Right Speed: ");
-        Serial.print(right_speed);
-        Serial.print(" | Steer value: ");
-        Serial.print(steer_value);
-        Serial.print(" | Loop-time: ");
-        Serial.print(loop_time);
-
-        Serial.println();
-    }
+double MotorController::get_steer_value() {
+    return steer_value;
 }

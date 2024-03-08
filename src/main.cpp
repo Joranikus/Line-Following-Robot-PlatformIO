@@ -8,8 +8,8 @@
 int num_sensor_pins = 7;
 int sensor_pins[7] = {22, 23, 16, 17, 5, 18, 21};
 
-DirectionClass directionClass{sensor_pins, num_sensor_pins};
-MotorController motorController{0, 300};
+DirectionClass direction_class{sensor_pins, num_sensor_pins};
+MotorController motor_controller{0, 300};
 PID pid{150, 1.0, 0.9, 0.0};
 Tests tests;
 
@@ -26,31 +26,22 @@ void setup()
     Serial.println("Setup complete.");
 }
 
-unsigned long last_print_time = 0;
-
 void loop()
 {
-    auto start_time = millis();
-
     //retrieves raw direction values
-    auto dir_without_pid = directionClass.get_direction();
+    auto dir_without_pid = direction_class.get_direction();
 
     //clamps PID output within specified range
     auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
 
     //controls motors based on direction and speed adjustment
-    motorController.motor_control(dir, 0.80);
+    motor_controller.motor_control(dir, 0.80);
 
-    auto end_time = millis();
+    /////////////////////// TESTS ///////////////////////
 
-    //prints motor speed
-    motorController.print_motor_speed(dir, end_time - start_time, dir_without_pid);
+    //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
 
-    auto current_time = millis();
+    //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 
-    //prints sensor values
-    if (current_time > (last_print_time + 500)) {
-        tests.print_sensors(sensor_pins, num_sensor_pins);
-        last_print_time = current_time;
-    }
+    /////////////////////////////////////////////////////
 }
