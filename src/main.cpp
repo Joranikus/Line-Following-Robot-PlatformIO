@@ -9,14 +9,16 @@
 int num_sensor_pins = 7;
 int sensor_pins[7] = {22, 23, 16, 17, 5, 18, 21};
 
-int yellow_light_pin = 4;
+int yellow_light_pin = 15;
 int green_led_pin = 2;
-int red_led_pin = 15;
+int red_led_pin = 4;
+int voltage_pin = 35;
 
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
 PID pid{150, 1.0, 0.9, 0.0};
 Tests tests;
+BatteryManager battery_manager{yellow_light_pin, green_led_pin, red_led_pin, voltage_pin};
 
 void setup()
 {
@@ -26,6 +28,8 @@ void setup()
     ledcAttachPin(25, 0);
     ledcAttachPin(26, 1);
 
+    battery_manager.set_battery_threshold(3.7, 3.2);
+
     Serial.begin(9600);
     Serial.println();
     Serial.println("Setup complete.");
@@ -33,20 +37,28 @@ void setup()
 
 void loop()
 {
-    //retrieves raw direction values
-    auto dir_without_pid = direction_class.get_direction();
+    while(battery_manager.shutdown_status()) {
 
-    //clamps PID output within specified range
-    auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
+        battery_manager.update();
 
-    //controls motors based on direction and speed adjustment
-    motor_controller.motor_control(dir, 0.80);
+        //retrieves raw direction values
+        auto dir_without_pid = direction_class.get_direction();
 
-    /////////////////////// TESTS ///////////////////////
+        //clamps PID output within specified range
+        auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
 
-    //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
+        //controls motors based on direction and speed adjustment
+        motor_controller.motor_control(dir, 0.80);
 
-    //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
+        /////////////////////// TESTS ///////////////////////
 
-    /////////////////////////////////////////////////////
+        //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
+
+        //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
+
+        tests.print_status(battery_manager);
+
+        /////////////////////////////////////////////////////
+
+    }
 }

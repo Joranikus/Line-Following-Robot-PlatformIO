@@ -3,6 +3,7 @@
 #define LINEFOLLOWINGROBOT_TESTS_HPP
 
 #include "MotorController.hpp"
+#include "BatteryManager.hpp"
 
 class Tests {
 public:
@@ -12,6 +13,8 @@ public:
 
     void print_motor_speed(MotorController& motor_controller, double dir_without_pid,
                            double current_direction, int print_delay) const;
+
+    void print_status(BatteryManager &battery_manager);
 };
 
 

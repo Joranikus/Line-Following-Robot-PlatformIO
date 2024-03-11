@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "Tests.hpp"
 #include "MotorController.hpp"
+#include "BatteryManager.hpp"
 
 void Tests::print_sensors(int *pins, int num_pins, int print_delay) const {
     static unsigned long last_print_time = 0;
@@ -45,4 +46,16 @@ void Tests::print_motor_speed(MotorController& motor_controller, double dir_with
         // Update the last print time
         last_print_time = current_time;
     }
+}
+
+void Tests::print_status(BatteryManager& battery_manager) {
+    Serial.print("GREEN LED: ");
+    Serial.print(battery_manager.get_green_led_status());
+    Serial.print(" | YELLOW LED: ");
+    Serial.print(battery_manager.get_yellow_led_status());
+    Serial.print(" | RED LED: ");
+    Serial.print(battery_manager.get_red_led_status());
+    Serial.print(" | VOLTAGE: ");
+    Serial.print(battery_manager.get_battery_voltage());
+    Serial.println();
 }
