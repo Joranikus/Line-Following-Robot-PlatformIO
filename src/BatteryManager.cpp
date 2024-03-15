@@ -11,7 +11,9 @@ BatteryManager::BatteryManager(int yellow_led_pin, int green_led_pin, int red_le
 
 void BatteryManager::update() {
     float voltage_divider_ratio = 0.5;
-    this->battery_voltage = float((analogRead(voltage_pin) * (3.3 / 4095)) / voltage_divider_ratio);
+    float raw_voltage = analogRead(voltage_pin) * (3.3 / 4095);
+    float scaled_voltage = (raw_voltage / voltage_divider_ratio) + 0.2;
+    battery_voltage = round(scaled_voltage * 10) / 10;
     update_LEDs();
 }
 
@@ -30,7 +32,7 @@ bool BatteryManager::shutdown_status() {
 
 void BatteryManager::update_LEDs() {
     if (battery_voltage <= red_threshold) {
-        this->shutdown = true;
+        shutdown = true;
         digitalWrite(red_led_pin, 1);
         digitalWrite(yellow_led_pin, 0);
         digitalWrite(green_led_pin, 0);
@@ -38,6 +40,7 @@ void BatteryManager::update_LEDs() {
         yellow_led_status = false;
         green_led_status = false;
     } else if (battery_voltage <= yellow_threshold) {
+        shutdown = false;
         digitalWrite(red_led_pin, 0);
         digitalWrite(yellow_led_pin, 1);
         digitalWrite(green_led_pin, 0);
@@ -45,6 +48,7 @@ void BatteryManager::update_LEDs() {
         yellow_led_status = true;
         green_led_status = false;
     } else {
+        shutdown = false;
         digitalWrite(red_led_pin, 0);
         digitalWrite(yellow_led_pin, 0);
         digitalWrite(green_led_pin, 1);

@@ -14,6 +14,8 @@ int green_led_pin = 2;
 int red_led_pin = 4;
 int voltage_pin = 35;
 
+int sensor_lights_pin = 12;
+
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
 PID pid{150, 1.0, 0.9, 0.0};
@@ -29,6 +31,10 @@ void setup()
     ledcAttachPin(26, 1);
 
     battery_manager.set_battery_threshold(3.7, 3.2);
+
+    //midlertidig sensorlys
+    pinMode(sensor_lights_pin, OUTPUT);
+    analogWrite(sensor_lights_pin, 4000);
 
     Serial.begin(9600);
     Serial.println();
