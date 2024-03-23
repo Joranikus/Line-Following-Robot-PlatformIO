@@ -5,6 +5,7 @@
 #include "PID.hpp"
 #include "Tests.hpp"
 #include "BatteryManager.hpp"
+#include "TimerStats.hpp"
 
 int num_sensor_pins = 7;
 int sensor_pins[7] = {22, 23, 16, 17, 5, 18, 21};
@@ -21,6 +22,7 @@ MotorController motor_controller{0, 300};
 PID pid{150, 1.0, 0.9, 0.0};
 Tests tests;
 BatteryManager battery_manager{yellow_light_pin, green_led_pin, red_led_pin, voltage_pin};
+TimerStats timerStats;
 
 void setup()
 {
@@ -31,6 +33,7 @@ void setup()
     ledcAttachPin(26, 1);
 
     battery_manager.set_battery_threshold(3.7, 3.2);
+    timerStats = TimerStats();
 
     //midlertidig sensorlys
     pinMode(sensor_lights_pin, OUTPUT);
@@ -44,6 +47,11 @@ void setup()
 void loop()
 {
     while(battery_manager.shutdown_status()) {
+        timerStats.startTimer();
+
+        if (timerStats.printIters % 5000 == 0) {
+            timerStats.printTimerData();
+        }
 
         battery_manager.update();
 
@@ -62,9 +70,10 @@ void loop()
 
         //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 
-        tests.print_status(battery_manager);
+        //tests.print_status(battery_manager);
 
         /////////////////////////////////////////////////////
-
     }
+
+    Serial.println("Battery emtpy.");
 }
