@@ -46,7 +46,7 @@ void setup()
 
 void loop()
 {
-    while(battery_manager.shutdown_status()) {
+    if (battery_manager.shutdown_status()) {
         timerStats.startTimer();
 
         if (timerStats.printIters % 5000 == 0) {
@@ -73,7 +73,7 @@ void loop()
         //tests.print_status(battery_manager);
 
         /////////////////////////////////////////////////////
+    } else {
+        Serial.println("Battery emtpy.");
     }
-
-    Serial.println("Battery emtpy.");
 }
