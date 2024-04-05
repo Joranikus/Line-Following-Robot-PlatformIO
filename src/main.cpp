@@ -29,7 +29,7 @@ void setup()
     ledcSetup(0, 300000, 8);
     ledcSetup(1, 300000, 8);
 
-    ledcAttachPin(25, 0);
+    ledcAttachPin(27, 0);
     ledcAttachPin(26, 1);
 
     battery_manager.set_battery_threshold(3.7, 3.2);
