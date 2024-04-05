@@ -31,6 +31,10 @@ private:
     float yellow_threshold;
     float red_threshold;
     void update_LEDs(); // Function to update LED status based on battery voltage
+
+    float currentVolt = 5;
+    float prevVolt = 5;
+    float doublePrevVolt = 5;
 };
 
 #endif //LINE_FOLLOWING_ROBOT_PLATFORMIO_BATTERYMANAGER_HPP

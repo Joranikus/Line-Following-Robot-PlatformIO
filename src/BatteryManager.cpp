@@ -14,6 +14,13 @@ void BatteryManager::update() {
     float raw_voltage = analogRead(voltage_pin) * (3.3 / 4095);
     float scaled_voltage = (raw_voltage / voltage_divider_ratio) + 0.2;
     battery_voltage = round(scaled_voltage * 10) / 10;
+
+    doublePrevVolt = prevVolt;
+    prevVolt = currentVolt;
+    currentVolt = battery_voltage;
+
+    battery_voltage = max(doublePrevVolt, max(prevVolt, currentVolt));
+
     update_LEDs();
 }
 
