@@ -46,37 +46,38 @@ void setup()
 
 void loop()
 {
-    if (battery_manager.shutdown_status()) {
-
-        /* TIMER
-        timerStats.startTimer();
-
-        if (timerStats.printIters % 5000 == 0) {
-            timerStats.printTimerData();
-        }
-        */
-
-        battery_manager.update();
-
-        //retrieves raw direction values
-        auto dir_without_pid = direction_class.get_direction();
-
-        //clamps PID output within specified range
-        auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
-
-        //controls motors based on direction and speed adjustment
-        motor_controller.motor_control(dir, 0.80);
-
-        /////////////////////// TESTS ///////////////////////
-
-        //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
-
-        //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
-
-        //tests.print_status(battery_manager);
-
-        /////////////////////////////////////////////////////
-    } else {
+    if (!battery_manager.shutdown_status()) {
         Serial.println("Battery emtpy.");
+        return;
     }
+
+
+    /* TIMER
+    timerStats.startTimer();
+
+    if (timerStats.printIters % 5000 == 0) {
+        timerStats.printTimerData();
+    }
+    */
+
+    battery_manager.update();
+
+    //retrieves raw direction values
+    auto dir_without_pid = direction_class.get_direction();
+
+    //clamps PID output within specified range
+    auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
+
+    //controls motors based on direction and speed adjustment
+    motor_controller.motor_control(dir, 0.80);
+
+    /////////////////////// TESTS ///////////////////////
+
+    //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
+
+    //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
+
+    //tests.print_status(battery_manager);
+
+    /////////////////////////////////////////////////////
 }
