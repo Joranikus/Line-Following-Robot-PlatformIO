@@ -39,7 +39,7 @@ void setup()
     pinMode(sensor_lights_pin, OUTPUT);
     analogWrite(sensor_lights_pin, 4000);
 
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println();
     Serial.println("Setup complete.");
 }
@@ -47,11 +47,14 @@ void setup()
 void loop()
 {
     if (battery_manager.shutdown_status()) {
+
+        /* TIMER
         timerStats.startTimer();
 
         if (timerStats.printIters % 5000 == 0) {
             timerStats.printTimerData();
         }
+        */
 
         battery_manager.update();
 
