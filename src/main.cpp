@@ -51,15 +51,6 @@ void loop()
         return;
     }
 
-
-    /* TIMER
-    timerStats.startTimer();
-
-    if (timerStats.printIters % 5000 == 0) {
-        timerStats.printTimerData();
-    }
-    */
-
     battery_manager.update();
 
     //retrieves raw direction values
@@ -78,6 +69,14 @@ void loop()
     //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 
     //tests.print_status(battery_manager);
+
+    /* START TIMER
+    timerStats.startTimer();
+
+    if (timerStats.printIters % 5000 == 0) {
+        timerStats.printTimerData();
+    } END TIMER
+    */
 
     /////////////////////////////////////////////////////
 }
