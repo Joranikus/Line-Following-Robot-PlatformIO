@@ -14,7 +14,7 @@ public:
 private:
     void send_signal() const;
 
-    int motor1PWM = 25;
+    int motor1PWM = 26;
     int motor2PWM = 27;
 
     double min_value = 0.0;

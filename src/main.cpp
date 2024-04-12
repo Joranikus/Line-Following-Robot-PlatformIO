@@ -26,11 +26,11 @@ TimerStats timerStats;
 
 void setup()
 {
-    ledcSetup(0, 300000, 8);
-    ledcSetup(1, 300000, 8);
+    ledcSetup(0, 300000, 8); // Sets up PWM
+    ledcSetup(1, 300000, 8); // Sets up PWM
 
-    ledcAttachPin(27, 0);
-    ledcAttachPin(26, 1);
+    ledcAttachPin(27, 0); // Attaches pin to PWM channel
+    ledcAttachPin(26, 1); // Attaches pin to PWM channel
 
     battery_manager.set_battery_threshold(3.7, 3.2);
     timerStats = TimerStats();
@@ -47,6 +47,7 @@ void setup()
 void loop()
 {
     if (!battery_manager.shutdown_status()) {
+        battery_manager.update();
         Serial.println("Battery emtpy.");
         return;
     }
@@ -70,13 +71,12 @@ void loop()
 
     //tests.print_status(battery_manager);
 
-    /* START TIMER
+    /*// START TIMER
     timerStats.startTimer();
 
-    if (timerStats.printIters % 5000 == 0) {
+    if (timerStats.printIters % 50000 == 0) {
         timerStats.printTimerData();
-    } END TIMER
-    */
+    } // END TIMER*/
 
     /////////////////////////////////////////////////////
 }
