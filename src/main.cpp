@@ -1,5 +1,6 @@
 
 #include <Arduino.h>
+#include <ArduinoOTA.h>
 #include "DirectionClass.hpp"
 #include "MotorController.hpp"
 #include "PID.hpp"
@@ -42,10 +43,24 @@ void setup()
     Serial.begin(115200);
     Serial.println();
     Serial.println("Setup complete.");
+
+    WiFi.begin("NothingPhone", "Ok123456");
+
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(100);
+    }
+
+    Serial.println("Wifi connected.");
+    ArduinoOTA.begin();
+
+    Serial.print("IP: ");
+    Serial.println(WiFi.localIP());
 }
 
 void loop()
 {
+    ArduinoOTA.handle();
+
     if (!battery_manager.shutdown_status()) {
         battery_manager.update();
         Serial.println("Battery emtpy.");
