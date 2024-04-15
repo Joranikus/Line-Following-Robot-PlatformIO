@@ -13,19 +13,18 @@ double PID::output(double input) {
     auto prop = error * Kp;
 
     integral += error;
-    integral *= Ki;
+    // integral *= Ki;
+    if (integral < -100.0) {
+        integral = -100.0;
+    } else if (integral > 100.0) {
+        integral = 100.0;
+    }
 
     auto derivative = (error - prev_error) * Kd;
 
-    auto output = prop + integral + derivative;
+    auto output = prop + integral * Ki + derivative;
 
     prev_error = error;
-
-    // Limit output if necessary
-    // if output > max_output:
-    // output = max_output
-    // else if output < min_output:
-    // output = min_output
 
     return set_point - output;
 }
