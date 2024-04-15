@@ -11,7 +11,7 @@ BatteryManager::BatteryManager(int yellow_led_pin, int green_led_pin, int red_le
 
 void BatteryManager::update() {
     float voltage_divider_ratio = 0.5;
-    float raw_voltage = analogRead(voltage_pin) * (3.3 / 4095);
+    float raw_voltage = analogRead(voltage_pin) * (3.3 / 4095.0);
     float scaled_voltage = (raw_voltage / voltage_divider_ratio) + 0.2;
     battery_voltage = round(scaled_voltage * 10) / 10;
 
