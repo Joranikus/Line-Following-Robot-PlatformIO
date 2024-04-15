@@ -15,11 +15,13 @@ void TimerStats::startTimer() {
 
     int updateFreq = 5000;
 
-    if (iters == updateFreq) {
+    if (iters % updateFreq == 0) {
         estimatedLoopTime = static_cast<double>(millis() - prevTime) / static_cast<double>(updateFreq);
         loopsPerSecond = static_cast<long>(1000.0 / estimatedLoopTime);
         iters = 0;
         prevTime = millis();
+
+        printTimerData();
     }
 }
 

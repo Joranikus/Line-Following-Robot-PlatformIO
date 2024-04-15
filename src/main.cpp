@@ -71,13 +71,7 @@ void loop()
 
     //tests.print_status(battery_manager);
 
-    /* START TIMER
-    timerStats.startTimer();
-
-    if (timerStats.printIters % 5000 == 0) {
-        timerStats.printTimerData();
-    } END TIMER
-    */
+    //timerStats.startTimer();
 
     /////////////////////////////////////////////////////
 }
