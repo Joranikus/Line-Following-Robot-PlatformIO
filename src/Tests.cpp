@@ -4,11 +4,11 @@
 #include "BatteryManager.hpp"
 
 void Tests::print_sensors(int *pins, int num_pins, int print_delay) const {
-    static unsigned long last_print_time = 0;
-    unsigned long current_time = millis();
+//    static unsigned long last_print_time = 0;
+//    unsigned long current_time = millis();
 
     // Check if enough time has elapsed since the last print
-    if (current_time - last_print_time >= print_delay) {
+//    if (current_time - last_print_time >= print_delay) {
         for (int ix = 0; ix < num_pins; ix++)
         {
             Serial.print(digitalRead(pins[ix]));
@@ -21,8 +21,8 @@ void Tests::print_sensors(int *pins, int num_pins, int print_delay) const {
         Serial.println();
 
         // Update the last print time
-        last_print_time = current_time;
-    }
+//        last_print_time = current_time;
+//    }
 }
 
 void Tests::print_motor_speed(MotorController& motor_controller, double dir_without_pid, double current_direction, int print_delay) const {

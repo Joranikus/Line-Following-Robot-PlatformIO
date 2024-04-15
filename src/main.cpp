@@ -8,7 +8,7 @@
 #include "TimerStats.hpp"
 
 int num_sensor_pins = 7;
-int sensor_pins[7] = {22, 23, 16, 17, 5, 18, 21};
+int sensor_pins[7] = {17, 16, 5, 18, 21, 22, 23};
 
 int yellow_light_pin = 15;
 int green_led_pin = 2;
@@ -47,7 +47,7 @@ void setup()
 void loop()
 {
     if (!battery_manager.shutdown_status()) {
-        Serial.println("Battery emtpy.");
+        //Serial.println("Battery emtpy.");
         return;
     }
 
@@ -60,7 +60,7 @@ void loop()
     auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
 
     //controls motors based on direction and speed adjustment
-    motor_controller.motor_control(dir, 0.80);
+    motor_controller.motor_control(dir, 0.50);
 
     /////////////////////// TESTS ///////////////////////
 
