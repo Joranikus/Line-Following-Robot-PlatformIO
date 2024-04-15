@@ -47,7 +47,8 @@ void setup()
 void loop()
 {
     if (!battery_manager.shutdown_status()) {
-        //Serial.println("Battery emtpy.");
+        battery_manager.update();
+        Serial.println("Battery emtpy.");
         return;
     }
 
@@ -60,7 +61,7 @@ void loop()
     auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
 
     //controls motors based on direction and speed adjustment
-    motor_controller.motor_control(dir, 0.50);
+    motor_controller.motor_control(dir, 0.80);
 
     /////////////////////// TESTS ///////////////////////
 

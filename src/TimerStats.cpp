@@ -13,8 +13,10 @@ void TimerStats::startTimer() {
     iters++;
     printIters++;
 
-    if (iters == 500) {
-        estimatedLoopTime = static_cast<double>(millis() - prevTime) / 500.0;
+    int updateFreq = 5000;
+
+    if (iters == updateFreq) {
+        estimatedLoopTime = static_cast<double>(millis() - prevTime) / static_cast<double>(updateFreq);
         loopsPerSecond = static_cast<long>(1000.0 / estimatedLoopTime);
         iters = 0;
         prevTime = millis();
