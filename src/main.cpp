@@ -20,7 +20,7 @@ int sensor_lights_pin = 12;
 
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
-PID pid{150, 1.0, 0.9, 0.0};
+PID pid{150, 2, 0.5, 0.0};
 Tests tests;
 BatteryManager battery_manager{yellow_light_pin, green_led_pin, red_led_pin, voltage_pin};
 TimerStats timerStats;
@@ -76,7 +76,7 @@ void loop()
     auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
 
     //controls motors based on direction and speed adjustment
-    motor_controller.motor_control(dir, 0.80);
+    motor_controller.motor_control(dir, 0.6);
 
     /////////////////////// TESTS ///////////////////////
 
