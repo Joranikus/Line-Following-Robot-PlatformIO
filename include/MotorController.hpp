@@ -20,11 +20,11 @@ private:
     int motor1PWM = 25;
     int motor2PWM = 27;
 
-    bool motor_1_forward = 13;
-    bool motor_1_reverse = 14;
+    int motor_2_forward = 13;
+    int motor_2_reverse = 14;
 
-    bool motor_2_forward = 32;
-    bool motor_2_reverse = 33;
+    int motor_1_forward = 32;
+    int motor_1_reverse = 33;
 
     double min_value = 0.0;
     double max_value = 300.0;

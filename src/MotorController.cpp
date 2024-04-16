@@ -11,6 +11,11 @@ MotorController::MotorController(double min_value, double max_value)
 
     pinMode(motor1PWM, OUTPUT);
     pinMode(motor2PWM, OUTPUT);
+
+    pinMode(motor_1_forward, OUTPUT);
+    pinMode(motor_1_reverse, OUTPUT);
+    pinMode(motor_2_forward, OUTPUT);
+    pinMode(motor_2_reverse, OUTPUT);
 }
 
 void MotorController::motor_control_forward(double analog_value, double speed_adjust) {
@@ -20,10 +25,10 @@ void MotorController::motor_control_forward(double analog_value, double speed_ad
     left_speed = (steer_value > 128.0) ? 255.0 * speed_adjust : steer_value * 2.0 * speed_adjust;
     right_speed = (steer_value < 128.0) ? 255.0 * speed_adjust : (255.0 - steer_value) * 2.0 * speed_adjust;
 
-    digitalWrite(motor_1_forward, HIGH);
-    digitalWrite(motor_1_reverse, LOW);
-    digitalWrite(motor_2_forward, HIGH);
-    digitalWrite(motor_2_reverse, LOW);
+    digitalWrite(motor_1_forward, 1);
+    digitalWrite(motor_1_reverse, 0);
+    digitalWrite(motor_2_forward, 1);
+    digitalWrite(motor_2_reverse, 0);
 
     send_signal();
 }
@@ -32,10 +37,10 @@ void MotorController::motor_control_left_turn(double speed_adjust) {
     left_speed = 255 * speed_adjust;
     right_speed = 255 * speed_adjust;
 
-    digitalWrite(motor_1_forward, LOW);
-    digitalWrite(motor_1_reverse, HIGH);
-    digitalWrite(motor_2_forward, HIGH);
-    digitalWrite(motor_2_reverse, LOW);
+    digitalWrite(motor_1_forward, 0);
+    digitalWrite(motor_1_reverse, 1);
+    digitalWrite(motor_2_forward, 1);
+    digitalWrite(motor_2_reverse, 0);
 
     send_signal();
 }
@@ -44,10 +49,10 @@ void MotorController::motor_control_right_turn(double speed_adjust) {
     left_speed = 255 * speed_adjust;
     right_speed = 255 * speed_adjust;
 
-    digitalWrite(motor_1_forward, HIGH);
-    digitalWrite(motor_1_reverse, LOW);
-    digitalWrite(motor_2_forward, LOW);
-    digitalWrite(motor_2_reverse, HIGH);
+    digitalWrite(motor_1_forward, 1);
+    digitalWrite(motor_1_reverse, 0);
+    digitalWrite(motor_2_forward, 0);
+    digitalWrite(motor_2_reverse, 1);
 
     send_signal();
 }

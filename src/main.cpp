@@ -6,7 +6,6 @@
 #include "PID.hpp"
 #include "Tests.hpp"
 #include "BatteryManager.hpp"
-#include "TimerStats.hpp"
 
 int num_sensor_pins = 7;
 int sensor_pins[7] = {17, 16, 5, 18, 21, 22, 23};
@@ -22,8 +21,8 @@ DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
 PID pid{150, 2, 0.5, 0.0};
 float pid_speed_adjust = 0.6;
-float speed_adjust_90 = 0.6;
-int turn_time = 1000;
+float speed_adjust_90 = 1;
+int turn_time = 300;
 Tests tests;
 BatteryManager battery_manager{yellow_light_pin, green_led_pin, red_led_pin, voltage_pin};
 
@@ -71,11 +70,14 @@ void loop()
     battery_manager.update();
 
     if (direction_class.is_right_turn_detected() || direction_class.is_left_turn_detected()) {
-        direction_class.execute_90_degree_turn(motor_controller, pid_speed_adjust, turn_time);
+        Serial.println("Turn detected. Executing 90-degree turn...");
+        direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time);
+        Serial.println("Turn completed.");
     } else {
+        Serial.println("PID Control.");
         auto dir_without_pid = direction_class.get_direction();
         auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
-        motor_controller.motor_control_forward(dir, speed_adjust_90);
+        motor_controller.motor_control_forward(dir, pid_speed_adjust);
     }
 
     /////////////////////// TESTS ///////////////////////
