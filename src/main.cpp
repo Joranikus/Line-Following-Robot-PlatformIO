@@ -21,9 +21,11 @@ int sensor_lights_pin = 12;
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
 PID pid{150, 2, 0.5, 0.0};
+float pid_speed_adjust = 0.6;
+float speed_adjust_90 = 0.6;
+int turn_time = 1000;
 Tests tests;
 BatteryManager battery_manager{yellow_light_pin, green_led_pin, red_led_pin, voltage_pin};
-TimerStats timerStats;
 
 void setup()
 {
@@ -34,7 +36,6 @@ void setup()
     ledcAttachPin(26, 1);
 
     battery_manager.set_battery_threshold(3.7, 3.2);
-    timerStats = TimerStats();
 
     //midlertidig sensorlys
     pinMode(sensor_lights_pin, OUTPUT);
@@ -69,14 +70,13 @@ void loop()
 
     battery_manager.update();
 
-    //retrieves raw direction values
-    auto dir_without_pid = direction_class.get_direction();
-
-    //clamps PID output within specified range
-    auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
-
-    //controls motors based on direction and speed adjustment
-    motor_controller.motor_control(dir, 0.6);
+    if (direction_class.is_right_turn_detected() || direction_class.is_left_turn_detected()) {
+        direction_class.execute_90_degree_turn(motor_controller, pid_speed_adjust, turn_time);
+    } else {
+        auto dir_without_pid = direction_class.get_direction();
+        auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
+        motor_controller.motor_control_forward(dir, speed_adjust_90);
+    }
 
     /////////////////////// TESTS ///////////////////////
 

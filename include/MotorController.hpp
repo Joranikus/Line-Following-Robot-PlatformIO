@@ -5,7 +5,10 @@
 class MotorController {
 public:
     MotorController(double min_value, double max_value);
-    void motor_control(double analog_value, double speed_adjust);
+    void motor_control_forward(double analog_value, double speed_adjust);
+    void motor_control_left_turn(double speed_adjust);
+    void motor_control_right_turn(double speed_adjust);
+
     static double clamp(double val, double min_value, double max_value);
     double get_left_speed();
     double get_right_speed();
@@ -16,6 +19,12 @@ private:
 
     int motor1PWM = 25;
     int motor2PWM = 27;
+
+    bool motor_1_forward = 13;
+    bool motor_1_reverse = 14;
+
+    bool motor_2_forward = 32;
+    bool motor_2_reverse = 33;
 
     double min_value = 0.0;
     double max_value = 300.0;

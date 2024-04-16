@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "DirectionClass.hpp"
 
+
 DirectionClass::DirectionClass(const int *pins, int antall_pins)
 : antall_pins(antall_pins), sensor_pins(), out_pins() {
     /*Init a class to keep track of previous positions, and outputs new position.*/
@@ -59,4 +60,43 @@ void DirectionClass::read_sensor_pins() {
     {
         out_pins[i] = digitalRead(sensor_pins[i]);
     }
+}
+
+bool DirectionClass::is_left_turn_detected() {
+    // Read sensor pins
+    read_sensor_pins();
+
+    // Check if the leftmost sensors are detected
+    for (int i = 0; i < 3; ++i) {
+        if (out_pins[i] == HIGH) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool DirectionClass::is_right_turn_detected() {
+    // Read sensor pins
+    read_sensor_pins();
+
+    // Check if the rightmost sensors are detected
+    for (int i = antall_pins - 3; i < antall_pins; ++i) {
+        if (out_pins[i] == HIGH) {
+            return true;
+        }
+    }
+    return false;
+}
+void DirectionClass::execute_90_degree_turn(MotorController &motor_controller, float speed_adjust, int turn_time) {
+    //stop the motors
+    motor_controller.motor_control_forward(0, 0);
+
+    if (is_left_turn_detected()) {
+        motor_controller.motor_control_left_turn(speed_adjust);
+    } else if (is_right_turn_detected()) {
+        motor_controller.motor_control_right_turn(speed_adjust);
+    }
+
+    delay(turn_time);
+    motor_controller.motor_control_forward(0, 0);
 }
