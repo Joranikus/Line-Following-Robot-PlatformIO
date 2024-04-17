@@ -61,42 +61,136 @@ void DirectionClass::read_sensor_pins() {
         out_pins[i] = digitalRead(sensor_pins[i]);
     }
 }
-
+/*
 bool DirectionClass::is_left_turn_detected() {
-    // Read sensor pins
-    read_sensor_pins();
+    unsigned long start_time = millis();
+    bool detected[3] = {false}; // Array to track detection of each sensor
+    while (millis() - start_time < 100) {
+        read_sensor_pins();
 
-    // Check if the leftmost sensors are detected
-    for (int i = 0; i < 3; ++i) {
-        if (out_pins[i] == HIGH) {
-            return true;
+        for (int i = 0; i < 3; ++i) {
+            if (out_pins[i] == HIGH) {
+                detected[i] = true; // Mark sensor as detected if HIGH
+            }
         }
+
+        // Check if all sensors are detected
+        bool all_detected = true;
+        for (int i = 0; i < 3; ++i) {
+            if (!detected[i]) {
+                all_detected = false; // If any sensor is not detected, break
+                break;
+            }
+        }
+        if (all_detected) {
+            Serial.println("left turn detected");
+
+            return true; // Return true if all sensors are detected
+        }
+        delay(10); // Small delay for smoother loop execution
     }
     return false;
 }
 
 bool DirectionClass::is_right_turn_detected() {
-    // Read sensor pins
-    read_sensor_pins();
+    unsigned long start_time = millis();
+    bool detected[3] = {false}; // Array to track detection of each sensor
+    while (millis() - start_time < 100) {
+        read_sensor_pins();
 
-    // Check if the rightmost sensors are detected
-    for (int i = antall_pins - 3; i < antall_pins; ++i) {
-        if (out_pins[i] == HIGH) {
-            return true;
+        for (int i = antall_pins - 3; i < antall_pins; ++i) {
+            if (out_pins[i] == HIGH) {
+                detected[i - (antall_pins - 3)] = true; // Mark sensor as detected if HIGH
+            }
         }
+
+        // Check if all sensors are detected
+        bool all_detected = true;
+        for (int i = 0; i < 3; ++i) {
+            if (!detected[i]) {
+                all_detected = false; // If any sensor is not detected, break
+                break;
+            }
+        }
+        if (all_detected) {
+            Serial.println("right turn detected");
+            return true; // Return true if all sensors are detected
+        }
+        delay(10); // Small delay for smoother loop execution
     }
     return false;
 }
-void DirectionClass::execute_90_degree_turn(MotorController &motor_controller, float speed_adjust, int turn_time) {
-    //stop the motors
-    motor_controller.motor_control_forward(0, 0);
+*/
 
-    if (is_left_turn_detected()) {
-        motor_controller.motor_control_left_turn(speed_adjust);
-    } else if (is_right_turn_detected()) {
-        motor_controller.motor_control_right_turn(speed_adjust);
+bool DirectionClass::is_left_turn_detected() {
+    bool detected_sensor_0 = false;
+    bool detected_sensor_2 = false;
+
+        read_sensor_pins();
+
+        if (out_pins[0] == HIGH) {
+            detected_sensor_0 = true;
+        }
+        if (out_pins[1] == HIGH) {
+            detected_sensor_2 = true;
+        }
+
+        // Check if both sensors 0 and 2 are detected
+        if (detected_sensor_0 && detected_sensor_2) {
+            Serial.println("Left turn detected");
+            return true;
+        }
+
+    return false;
+}
+
+bool DirectionClass::is_right_turn_detected() {
+    bool detected_sensor_4 = false;
+    bool detected_sensor_6 = false;
+
+        read_sensor_pins();
+
+        if (out_pins[5] == HIGH) {
+            detected_sensor_4 = true;
+        }
+        if (out_pins[6] == HIGH) {
+            detected_sensor_6 = true;
+        }
+
+        // Check if both sensors 4 and 6 are detected
+        if (detected_sensor_4 && detected_sensor_6) {
+            Serial.println("Right turn detected");
+            return true;
+        }
+
+    return false;
+}
+
+void DirectionClass::execute_90_degree_turn(MotorController &motor_controller,
+                                            float speed_adjust, int turn_time,
+                                            unsigned long &last_detection_time,
+                                            unsigned long cooldown_time) {
+    unsigned long current_time = millis();
+
+    if (current_time - last_detection_time < cooldown_time) {
+        Serial.println("Cooldown");
+        return;
     }
 
-    delay(turn_time);
     motor_controller.motor_control_forward(0, 0);
+
+    bool left_detected = is_left_turn_detected();
+    bool right_detected = is_right_turn_detected();
+
+    if (left_detected || right_detected) {
+        if (left_detected) {
+            motor_controller.motor_control_left_turn(speed_adjust);
+        } else {
+            motor_controller.motor_control_right_turn(speed_adjust);
+        }
+        delay(turn_time);
+        motor_controller.motor_control_forward(0, 0);
+    }
+
+    last_detection_time = millis();
 }

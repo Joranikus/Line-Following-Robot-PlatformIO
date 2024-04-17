@@ -11,7 +11,7 @@ public:
     double get_direction();
     bool is_left_turn_detected();
     bool is_right_turn_detected();
-    void execute_90_degree_turn(MotorController &motor_controller, float speed_adjust, int turn_time);
+    void execute_90_degree_turn(MotorController &motor_controller, float speed_adjust, int turn_time, unsigned long &last_detection_time, unsigned long cooldown_time);
 
 private:
 
