@@ -83,13 +83,18 @@ void DirectionClass::updateExtremeTurn() {
 
 bool DirectionClass::is_left_turn_detected() {
     auto sum = arr_sum(out_pins, 7);
-    if (sum > 1) {return false;}
+    if (sum > 1) {
+        Serial.println("From sum > 1");
+        return false;
+    }
 
     if (out_pins[0]) {
+        Serial.println("From outPins[0]");
         return true;
     }
 
     if (sum != 0) {
+        Serial.println("From sum != 0");
         return false;
     }
 
@@ -99,29 +104,38 @@ bool DirectionClass::is_left_turn_detected() {
     }
 
     if (sumPrev == 0 && extremeTurnDirection == LEFT) {
+        Serial.println("From sumPrev && ..");
         return true;
     }
 
     if (sumPrev > 2) {
+        Serial.println("From sumPrev > 2");
         return false;
     }
 
     if (prevSensor[0] || prevSensor[1]) {
+        Serial.println("From prev || prev");
         return true;
     }
 
+    Serial.println("From default");
     return false;
 }
 
 bool DirectionClass::is_right_turn_detected() {
     auto sum = arr_sum(out_pins, 7);
-    if (sum > 1) {return false;}
+    if (sum > 1) {
+        Serial.println("From sum > 1");
+        return false;
+    }
 
     if (out_pins[6]) {
+        Serial.println("From outPins[6]");
         return true;
     }
 
     if (sum != 0) {
+        Serial.println("From sum != 0");
         return false;
     }
 
@@ -131,17 +145,21 @@ bool DirectionClass::is_right_turn_detected() {
     }
 
     if (sumPrev == 0 && extremeTurnDirection == LEFT) {
+        Serial.println("From sumPrev == 0 && ...");
         return true;
     }
 
     if (sumPrev > 2) {
+        Serial.println("From sumPrev > 2");
         return false;
     }
 
     if (prevSensor[6] || prevSensor[5]) {
+        Serial.println("From prev || prev");
         return true;
     }
 
+    Serial.println("From defoult");
     return false;
 }
 
