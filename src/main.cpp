@@ -73,14 +73,13 @@ void loop()
 
     battery_manager.update();
 
-
+    auto dir_without_pid = direction_class.get_direction();
     direction_class.updateExtremeTurn();
     auto extremeCorner = direction_class.extremeTurnDirection;
 
     switch (extremeCorner) {
         case OFF:
         {
-            auto dir_without_pid = direction_class.get_direction();
             auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
             motor_controller.motor_control_forward(dir, pid_speed_adjust);
         } break;
