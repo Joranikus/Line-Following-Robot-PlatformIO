@@ -70,9 +70,11 @@ void DirectionClass::updateExtremeTurn() {
     auto left = is_left_turn_detected();
     auto right = is_right_turn_detected();
 
-    if (left && !right) {
+    if (left && right) {
+        extremeTurnDirection = OFF;
+    } else if (left) {
         extremeTurnDirection = LEFT;
-    } else if (right && !left) {
+    } else if (right) {
         extremeTurnDirection = RIGHT;
     } else {
         extremeTurnDirection = OFF;
