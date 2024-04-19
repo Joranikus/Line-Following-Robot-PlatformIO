@@ -73,23 +73,38 @@ void loop()
 
     battery_manager.update();
 
-    bool left_detected = direction_class.is_left_turn_detected();
-    bool right_detected = direction_class.is_right_turn_detected();
 
-    if (left_detected && !right_detected) {
+    direction_class.updateExtremeTurn();
+    auto extremeCorner = direction_class.extremeTurnDirection;
+
+    switch (extremeCorner) {
+        case OFF:
+        {
+            auto dir_without_pid = direction_class.get_direction();
+            auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
+            motor_controller.motor_control_forward(dir, pid_speed_adjust);
+        } break;
+
+        default:
+        {
+            direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
+        }
+    }
+
+/*    if (left_detected && !right_detected) {
         direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
     } else if (right_detected && !left_detected) {
         direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
     } else {
         auto dir_without_pid = direction_class.get_direction();
         auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
-        motor_controller.motor_control_forward(dir, pid_speed_adjust);    }
+        motor_controller.motor_control_forward(dir, pid_speed_adjust);    }*/
 
     /////////////////////// TESTS ///////////////////////
 
     //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
 
-    //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
+    tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 
     //tests.print_status(battery_manager);
 
