@@ -75,9 +75,15 @@ void loop()
 
     auto dir_without_pid = direction_class.get_direction();
     direction_class.updateExtremeTurn();
-    auto extremeCorner = direction_class.extremeTurnDirection;
 
-    switch (extremeCorner) {
+    if (direction_class.extremeTurnActive) {
+        direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
+    } else {
+        auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
+        motor_controller.motor_control_forward(dir, pid_speed_adjust);
+    }
+
+/*    switch (extremeCorner) {
         case OFF:
         {
             auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
@@ -88,7 +94,7 @@ void loop()
         {
             direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
         }
-    }
+    }*/
 
 /*    if (left_detected && !right_detected) {
         direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);

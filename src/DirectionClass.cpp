@@ -67,6 +67,35 @@ void DirectionClass::read_sensor_pins() {
 }
 
 void DirectionClass::updateExtremeTurn() {
+    if (out_pins[0] && !out_pins[6]) {
+        extremeTurnDirection = LEFT;
+    } else if (out_pins[6] && !out_pins[0]) {
+        extremeTurnDirection = RIGHT;
+    }
+
+    int sum = 0;
+    for (int out_pin : out_pins) {
+        sum += out_pin;
+    }
+
+    if (sum == 0) {
+        nullSensorIters++;
+    } else {
+        nullSensorIters = 0;
+    }
+
+    if (nullSensorIters > 20) {
+        extremeTurnActive = true;
+    } else {
+        extremeTurnActive = false;
+    }
+
+    Serial.print("Iters: ");
+    Serial.print(nullSensorIters);
+    Serial.print(" | ExtremeTurnActive: ");
+    Serial.println(extremeTurnActive);
+    return;
+
     auto left = is_left_turn_detected();
     auto right = is_right_turn_detected();
 
@@ -83,6 +112,7 @@ void DirectionClass::updateExtremeTurn() {
 
 bool DirectionClass::is_left_turn_detected() {
     auto sum = arr_sum(out_pins, 7);
+
     if (sum > 1) {
         Serial.println("From sum > 1");
         return false;
