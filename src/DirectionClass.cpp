@@ -64,6 +64,12 @@ void DirectionClass::read_sensor_pins() {
     {
         out_pins[i] = digitalRead(sensor_pins[i]);
     }
+
+    if (arr_sum(out_pins ,7) != 0) {
+        for (int ix = 0; ix < 7; ix++) {
+            prevActiveSensor[ix] = out_pins[ix];
+        }
+    }
 }
 
 void DirectionClass::updateExtremeTurn() {
@@ -84,7 +90,11 @@ void DirectionClass::updateExtremeTurn() {
         nullSensorIters = 0;
     }
 
-    if (nullSensorIters > 20) {
+    auto left = prevActiveSensor[0];
+    auto right = prevActiveSensor[6];
+    auto edge = left or right;
+
+    if (nullSensorIters > 20 && edge) {
         extremeTurnActive = true;
     } else {
         extremeTurnActive = false;
@@ -96,18 +106,18 @@ void DirectionClass::updateExtremeTurn() {
     Serial.println(extremeTurnActive);
     return;
 
-    auto left = is_left_turn_detected();
-    auto right = is_right_turn_detected();
-
-    if (left && right) {
-        extremeTurnDirection = OFF;
-    } else if (left) {
-        extremeTurnDirection = LEFT;
-    } else if (right) {
-        extremeTurnDirection = RIGHT;
-    } else {
-        extremeTurnDirection = OFF;
-    }
+//    auto left = is_left_turn_detected();
+//    auto right = is_right_turn_detected();
+//
+//    if (left && right) {
+//        extremeTurnDirection = OFF;
+//    } else if (left) {
+//        extremeTurnDirection = LEFT;
+//    } else if (right) {
+//        extremeTurnDirection = RIGHT;
+//    } else {
+//        extremeTurnDirection = OFF;
+//    }
 }
 
 bool DirectionClass::is_left_turn_detected() {

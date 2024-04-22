@@ -33,6 +33,7 @@ private:
     int numPins;
     int sensor_pins[7]{};
     std::array<int, 7> prevSensor = {0, 0, 0, 0, 0, 0, 0};
+    std::array<int, 7> prevActiveSensor = {0, 0, 0, 0, 0, 0, 0};
     int out_pins[7]{};
     double prev_direction = 0.0;
     int nullSensorIters = 0;
