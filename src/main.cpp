@@ -22,8 +22,8 @@ unsigned long cooldown_time = 1000;
 
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
-PID pid{150, 2, 0.5, 0.0};
-float pid_speed_adjust = 0.6;
+PID pid{150, 3, 1000, 0};
+float pid_speed_adjust = 0.8;
 float speed_adjust_90 = 1;
 int turn_time = 100;
 
@@ -50,7 +50,8 @@ void setup()
 
     WiFi.begin("NothingPhone", "Ok123456");
 
-    while (WiFi.status() != WL_CONNECTED) {
+    auto startTime = millis();
+    while (WiFi.status() != WL_CONNECTED && (millis() - startTime) < 3000) {
         delay(100);
     }
 
@@ -75,13 +76,17 @@ void loop()
 
     auto dir_without_pid = direction_class.get_direction();
     direction_class.updateExtremeTurn();
-
+/*
     if (direction_class.extremeTurnActive) {
         direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
     } else {
         auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
         motor_controller.motor_control_forward(dir, pid_speed_adjust);
-    }
+    }*/
+
+    auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
+    motor_controller.motor_control_forward(dir, pid_speed_adjust);
+
 
 /*    switch (extremeCorner) {
         case OFF:
@@ -109,7 +114,7 @@ void loop()
 
     //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
 
-    tests.print_sensors(sensor_pins, num_sensor_pins, 500);
+    //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 
     //tests.print_status(battery_manager);
 

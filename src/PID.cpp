@@ -10,6 +10,8 @@ PID::PID(double set_point, double Kp, double Kd, double Ki)
 double PID::output(double input) {
     auto error = set_point - input;
 
+
+
     auto prop = error * Kp;
 
     integral += error;
@@ -20,7 +22,7 @@ double PID::output(double input) {
         integral = 100.0;
     }
 
-    auto derivative = (error - prev_error) * Kd;
+    auto derivative = (error - prev_error) * Kd * 3000;
 
     auto output = prop + integral * Ki + derivative;
 
