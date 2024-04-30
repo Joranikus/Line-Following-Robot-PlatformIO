@@ -22,8 +22,8 @@ unsigned long cooldown_time = 1000;
 
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
-PID pid{150, 3, 1000, 0};
-float pid_speed_adjust = 0.8;
+PID pid{150, 1.6, 5, 0.5};
+float pid_speed_adjust = 0.6;
 float speed_adjust_90 = 1;
 int turn_time = 100;
 
@@ -64,18 +64,23 @@ void setup()
 
 void loop()
 {
+
+    static unsigned long last_time = 0;
+    unsigned long current_time = millis();
+    double dt = current_time - last_time;
+
     ArduinoOTA.handle();
 
-    if (!battery_manager.shutdown_status()) {
+    /*if (!battery_manager.shutdown_status()) {
         battery_manager.update();
         Serial.println("Battery emtpy.");
         return;
     }
 
-    battery_manager.update();
+    battery_manager.update();*/
 
     auto dir_without_pid = direction_class.get_direction();
-    direction_class.updateExtremeTurn();
+    // direction_class.updateExtremeTurn();
 /*
     if (direction_class.extremeTurnActive) {
         direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
@@ -83,38 +88,20 @@ void loop()
         auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
         motor_controller.motor_control_forward(dir, pid_speed_adjust);
     }*/
+    auto pid_output = pid.output(dir_without_pid, dt);
+    auto dir = MotorController::clamp(pid_output, 0, 300);
 
-    auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
+//    Serial.print(dir_without_pid);
+//    Serial.print(" | ");
+//    Serial.println(dir);
+
     motor_controller.motor_control_forward(dir, pid_speed_adjust);
-
-
-/*    switch (extremeCorner) {
-        case OFF:
-        {
-            auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
-            motor_controller.motor_control_forward(dir, pid_speed_adjust);
-        } break;
-
-        default:
-        {
-            direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
-        }
-    }*/
-
-/*    if (left_detected && !right_detected) {
-        direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
-    } else if (right_detected && !left_detected) {
-        direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
-    } else {
-        auto dir_without_pid = direction_class.get_direction();
-        auto dir = MotorController::clamp(pid.output(dir_without_pid), 0, 300);
-        motor_controller.motor_control_forward(dir, pid_speed_adjust);    }*/
 
     /////////////////////// TESTS ///////////////////////
 
     //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 500);
 
-    //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
+    tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 
     //tests.print_status(battery_manager);
 
