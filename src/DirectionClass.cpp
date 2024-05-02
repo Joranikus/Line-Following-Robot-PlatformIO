@@ -94,12 +94,13 @@ void DirectionClass::updateExtremeTurn() {
     auto right = prevActiveSensor[6];
     auto edge = left or right;
 
-    if (nullSensorIters > 20 && edge) {
+    if (nullSensorIters > (3000 / 2.5) && edge) {
         extremeTurnActive = true;
     } else {
         extremeTurnActive = false;
     }
 
+    return;
     Serial.print("Iters: ");
     Serial.print(nullSensorIters);
     Serial.print(" | ExtremeTurnActive: ");
@@ -263,13 +264,65 @@ void DirectionClass::execute_90_degree_turn(MotorController &motor_controller,
     bool left_detected = extremeTurnDirection == LEFT;
     bool right_detected = extremeTurnDirection == RIGHT;
 
+    int back_time = 2000;
+
+    //motor_controller.motor_control_backward(150, speed_adjust);
+    //delay(500);
+
     if (left_detected || right_detected) {
         if (left_detected) {
+            motor_controller.motor_control_backward(300, speed_adjust);
+
+            auto current_time = millis();
+            while (current_time + back_time > millis()) {
+                read_sensor_pins();
+
+                int as = 0;
+                for (auto x : out_pins) {
+                    as += x;
+                }
+
+                if (as != 0 && as != 7) {
+                    motor_controller.motor_control_forward(0, 0);
+                    last_detection_time = millis();
+                    return;
+                }
+            }
+
+            // delay(400);
+
             motor_controller.motor_control_left_turn(speed_adjust);
         } else {
+            motor_controller.motor_control_backward(0, speed_adjust);
+
+            auto current_time = millis();
+            while (current_time + back_time > millis()) {
+                read_sensor_pins();
+
+                int as = 0;
+                for (auto x : out_pins) {
+                    as += x;
+                }
+
+                if (as != 0 && as != 7) {
+                    motor_controller.motor_control_forward(0, 0);
+                    last_detection_time = millis();
+                    return;
+                }
+            }
+
+            //delay(400);
+
             motor_controller.motor_control_right_turn(speed_adjust);
         }
-        delay(turn_time);
+
+        auto current_time = millis();
+        while (current_time + turn_time > millis()) {
+            get_direction();
+        }
+
+        //delay(turn_time);
+
         motor_controller.motor_control_forward(0, 0);
     }
 

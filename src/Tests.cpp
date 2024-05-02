@@ -31,7 +31,7 @@ void Tests::print_motor_speed(MotorController& motor_controller, double dir_with
 
     // Check if enough time has elapsed since the last print
     if (current_time - last_print_time >= print_delay) {
-        Serial.print("Analog Value: ");
+        Serial.print("PID-Output: ");
         Serial.print(current_direction);
         Serial.print(" | Without pid: ");
         Serial.print(dir_without_pid);

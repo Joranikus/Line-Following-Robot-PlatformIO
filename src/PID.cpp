@@ -2,6 +2,7 @@
 // Created by Øystein Bringsli.
 //
 
+#include <Arduino.h>
 #include "PID.hpp"
 
 PID::PID(double set_point, double Kp, double Kd, double Ki)
@@ -57,7 +58,9 @@ PID::PID(double set_point, double Kp, double Kd, double Ki)
 double PID::output(double input, double dt) {
     error = set_point - input;
 
-    integral += (error + prev_error) * dt / 2.0;
+    if (abs(error) < 1) {integral = 0;}
+    integral *= 0.999;
+    integral += (error + prev_error) * dt / 2000000.0;
 
     if (integral < -100.0) {
         integral = -100.0;
@@ -65,7 +68,10 @@ double PID::output(double input, double dt) {
         integral = 100.0;
     }
 
-    derivative = (error - prev_error) / dt;
+    constexpr double u = 0.001;
+    constexpr double v = 1 - u;
+    derivative = (error - prev_error) * dt * u + prev_derivative * v;
+    prev_derivative = derivative;
 
     auto output = (error * Kp) + (integral * Ki) + (derivative * Kd);
 

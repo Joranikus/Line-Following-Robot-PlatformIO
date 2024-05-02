@@ -6,6 +6,7 @@ class MotorController {
 public:
     MotorController(double min_value, double max_value);
     void motor_control_forward(double analog_value, double speed_adjust);
+    void motor_control_backward(double analog_value, double speed_adjust);
     void motor_control_left_turn(double speed_adjust);
     void motor_control_right_turn(double speed_adjust);
 

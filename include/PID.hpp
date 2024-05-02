@@ -19,6 +19,7 @@ public:
     double prev_error = 0;
     double integral = 0;
     double derivative = 0;
+    double prev_derivative = 0;
 
     double set_point;
 
