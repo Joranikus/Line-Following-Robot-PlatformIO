@@ -204,52 +204,10 @@ bool DirectionClass::is_right_turn_detected() {
     return false;
 }
 
-/*bool DirectionClass::is_left_turn_detected() {
-    bool detected_sensor_0 = false;
-    bool detected_sensor_2 = false;
-
-        read_sensor_pins();
-
-        if (out_pins[0] == HIGH) {
-            detected_sensor_0 = true;
-        }
-        if (out_pins[1] == HIGH) {
-            detected_sensor_2 = true;
-        }
-
-        // Check if both sensors 0 and 2 are detected
-        if (detected_sensor_0 && detected_sensor_2) {
-            Serial.println("Left turn detected");
-            return true;
-        }
-
-    return false;
-}
-
-bool DirectionClass::is_right_turn_detected() {
-    bool detected_sensor_4 = false;
-    bool detected_sensor_6 = false;
-
-        read_sensor_pins();
-
-        if (out_pins[5] == HIGH) {
-            detected_sensor_4 = true;
-        }
-        if (out_pins[6] == HIGH) {
-            detected_sensor_6 = true;
-        }
-
-        // Check if both sensors 4 and 6 are detected
-        if (detected_sensor_4 && detected_sensor_6) {
-            Serial.println("Right turn detected");
-            return true;
-        }
-
-    return false;
-}*/
-
 void DirectionClass::execute_90_degree_turn(MotorController &motor_controller,
-                                            float speed_adjust, int turn_time,
+                                            float speed_adjust,
+                                            float speed_adjust_backwards,
+                                            int turn_time,
                                             unsigned long &last_detection_time,
                                             unsigned long cooldown_time) {
     unsigned long current_time = millis();
@@ -271,49 +229,21 @@ void DirectionClass::execute_90_degree_turn(MotorController &motor_controller,
 
     if (left_detected || right_detected) {
         if (left_detected) {
-            motor_controller.motor_control_backward(300, speed_adjust);
+            motor_controller.motor_hard_backwards(speed_adjust_backwards);
+            delay(100);
 
-            auto current_time = millis();
-            while (current_time + back_time > millis()) {
-                read_sensor_pins();
-
-                int as = 0;
-                for (auto x : out_pins) {
-                    as += x;
-                }
-
-                if (as != 0 && as != 7) {
-                    motor_controller.motor_control_forward(0, 0);
-                    last_detection_time = millis();
-                    return;
-                }
-            }
-
-            // delay(400);
-
+            motor_controller.motor_control_forward(0, 0);
             motor_controller.motor_control_left_turn(speed_adjust);
+            delay(150);
+            return;
         } else {
-            motor_controller.motor_control_backward(0, speed_adjust);
+            motor_controller.motor_hard_backwards(speed_adjust_backwards);
+            delay(100);
 
-            auto current_time = millis();
-            while (current_time + back_time > millis()) {
-                read_sensor_pins();
-
-                int as = 0;
-                for (auto x : out_pins) {
-                    as += x;
-                }
-
-                if (as != 0 && as != 7) {
-                    motor_controller.motor_control_forward(0, 0);
-                    last_detection_time = millis();
-                    return;
-                }
-            }
-
-            //delay(400);
-
+            motor_controller.motor_control_forward(0, 0);
             motor_controller.motor_control_right_turn(speed_adjust);
+            delay(150);
+            return;
         }
 
         auto current_time = millis();

@@ -9,6 +9,7 @@ public:
     void motor_control_backward(double analog_value, double speed_adjust);
     void motor_control_left_turn(double speed_adjust);
     void motor_control_right_turn(double speed_adjust);
+    void motor_hard_backwards(double speed_adjust);
 
     static double clamp(double val, double min_value, double max_value);
     double get_left_speed();

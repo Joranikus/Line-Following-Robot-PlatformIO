@@ -25,6 +25,7 @@ MotorController motor_controller{0, 300};
 PID pid{150, 1.4, 1, 0.1};
 float pid_speed_adjust = 0.74;
 float speed_adjust_90 = 0.7;
+float speed_adjust_backwards = 0.5;
 int turn_time = 0;
 static unsigned long last_time = 0;
 
@@ -72,6 +73,7 @@ void loop()
 
     ArduinoOTA.handle();
 
+    /*
     if (!battery_manager.shutdown_status()) {
         battery_manager.update();
         Serial.println("Battery emtpy.");
@@ -79,30 +81,23 @@ void loop()
     }
 
     battery_manager.update();
+    */
 
     auto dir_without_pid = direction_class.get_direction();
     direction_class.updateExtremeTurn();
 
     auto dir = 0;
     if (direction_class.extremeTurnActive) {
-        direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
+        direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, speed_adjust_backwards, turn_time, last_detection_time, cooldown_time);
         direction_class.extremeTurnActive = false;
     } else {
         dir = MotorController::clamp(pid.output(dir_without_pid, dt), 0, 300);
         motor_controller.motor_control_forward(dir, pid_speed_adjust);
     }
-    //auto pid_output = pid.output(dir_without_pid, dt);
-    //auto dir = MotorController::clamp(pid_output, 0, 300);
-
-//    Serial.print(dir_without_pid);
-//    Serial.print(" | ");
-//    Serial.println(dir);
-
-    //motor_controller.motor_control_forward(dir, pid_speed_adjust);
 
     /////////////////////// TESTS ///////////////////////
 
-    tests.print_motor_speed(motor_controller, dir_without_pid, dir, 100);
+    //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 100);
 
     //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 

@@ -17,7 +17,7 @@ public:
     explicit DirectionClass(const int *pins, int antall_pins);
     double get_direction();
     void updateExtremeTurn();
-    void execute_90_degree_turn(MotorController &motor_controller, float speed_adjust, int turn_time, unsigned long &last_detection_time, unsigned long cooldown_time);
+    void execute_90_degree_turn(MotorController &motor_controller, float speed_adjust, float speed_adjust_backwards, int turn_time, unsigned long &last_detection_time, unsigned long cooldown_time);
     ExtremeTurnDirection extremeTurnDirection = OFF;
     bool extremeTurnActive = false;
 
