@@ -23,7 +23,7 @@ unsigned long cooldown_time = 1000;
 DirectionClass direction_class{sensor_pins, num_sensor_pins};
 MotorController motor_controller{0, 300};
 PID pid{150, 1.4, 1, 0.1};
-float pid_speed_adjust = 0.73;
+float pid_speed_adjust = 0.74;
 float speed_adjust_90 = 0.7;
 int turn_time = 0;
 static unsigned long last_time = 0;
