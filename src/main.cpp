@@ -1,14 +1,16 @@
 
+#include <array>
 #include <Arduino.h>
 #include <ArduinoOTA.h>
+
 #include "DirectionClass.hpp"
 #include "MotorController.hpp"
 #include "PID.hpp"
 #include "Tests.hpp"
 #include "BatteryManager.hpp"
 
-int num_sensor_pins = 7;
-int sensor_pins[7] = {17, 16, 5, 18, 21, 22, 23};
+const int num_sensor_pins = 7;
+std::array<short, num_sensor_pins> sensor_pins = {{17, 16, 5, 18, 21, 22, 23}};
 
 int yellow_light_pin = 15;
 int green_led_pin = 2;
@@ -20,7 +22,7 @@ int sensor_lights_pin = 12;
 unsigned long last_detection_time = 0;
 unsigned long cooldown_time = 1000;
 
-DirectionClass direction_class{sensor_pins, num_sensor_pins};
+DirectionClass direction_class{sensor_pins};
 MotorController motor_controller{0, 300};
 PID pid{150, 1.4, 1, 0.1};
 float pid_speed_adjust = 0.74;
