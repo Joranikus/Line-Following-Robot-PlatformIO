@@ -3,11 +3,11 @@
 #include "DirectionClass.hpp"
 
 
-DirectionClass::DirectionClass(const int *pins, int antall_pins)
-: numPins(antall_pins), sensor_pins(), out_pins() {
+DirectionClass::DirectionClass(std::array<short, 7> pins)
+: numPins(pins.size()), sensor_pins(), out_pins() {
     /*Init a class to keep track of previous positions, and outputs new position.*/
 
-    for (int i = 0; i < antall_pins; i++)
+    for (int i = 0; i < numPins; i++)
     {
         sensor_pins[i] = pins[i];
         out_pins[i] = 0;
@@ -19,21 +19,17 @@ double DirectionClass::get_direction() {
     return DirectionClass::this_direction();
 }
 
-int DirectionClass::arr_sum(const int* arr, int size)
-{
-    //Returns the sum of elements in array.
-    //NB! Max length of array is 2^16, but max value of output is 2^15
-
+int DirectionClass::arraySum(std::array<short, 7> &values) {
     int sum = 0;
-    for (unsigned int i = 0; i < size; ++i) {
-        sum += arr[i];
+    for (int i : values) {
+        sum += i;
     }
     return sum;
 }
 
 double DirectionClass::this_direction() {
 
-    int as = arr_sum(out_pins, numPins);
+    int as = arraySum(out_pins);
     if ((as == 0) or (as == numPins)) {return prev_direction;}
 
     //Sets the upper and lower bound to the edges.
@@ -62,10 +58,10 @@ void DirectionClass::read_sensor_pins() {
 
     for (int i = 0; i < numPins; i++)
     {
-        out_pins[i] = digitalRead(sensor_pins[i]);
+        out_pins[i] = static_cast<short>(digitalRead(sensor_pins[i]));
     }
 
-    if (arr_sum(out_pins ,7) != 0) {
+    if (arraySum(out_pins) != 0) {
         for (int ix = 0; ix < 7; ix++) {
             prevActiveSensor[ix] = out_pins[ix];
         }
@@ -99,160 +95,32 @@ void DirectionClass::updateExtremeTurn() {
     } else {
         extremeTurnActive = false;
     }
-
-    return;
-    Serial.print("Iters: ");
-    Serial.print(nullSensorIters);
-    Serial.print(" | ExtremeTurnActive: ");
-    Serial.println(extremeTurnActive);
-    return;
-
-//    auto left = is_left_turn_detected();
-//    auto right = is_right_turn_detected();
-//
-//    if (left && right) {
-//        extremeTurnDirection = OFF;
-//    } else if (left) {
-//        extremeTurnDirection = LEFT;
-//    } else if (right) {
-//        extremeTurnDirection = RIGHT;
-//    } else {
-//        extremeTurnDirection = OFF;
-//    }
 }
 
-bool DirectionClass::is_left_turn_detected() {
-    auto sum = arr_sum(out_pins, 7);
+bool DirectionClass::waitForDetection(int maxTime) {
 
-    if (sum > 1) {
-        Serial.println("From sum > 1");
-        return false;
-    }
+    // Will wait maxTime ms unless it can see the line.
+    // Returns True if it finds the line, False otherwise.
 
-    if (out_pins[0]) {
-        Serial.println("From outPins[0]");
-        return true;
-    }
-
-    if (sum != 0) {
-        Serial.println("From sum != 0");
-        return false;
-    }
-
-    int sumPrev = 0;
-    for (auto x : prevSensor) {
-        sumPrev += x;
-    }
-
-    if (sumPrev == 0 && extremeTurnDirection == LEFT) {
-        Serial.println("From sumPrev && ..");
-        return true;
-    }
-
-    if (sumPrev > 2) {
-        Serial.println("From sumPrev > 2");
-        return false;
-    }
-
-    if (prevSensor[0] || prevSensor[1]) {
-        Serial.println("From prev || prev");
-        return true;
-    }
-
-    Serial.println("From default");
-    return false;
-}
-
-bool DirectionClass::is_right_turn_detected() {
-    auto sum = arr_sum(out_pins, 7);
-    if (sum > 1) {
-        Serial.println("From sum > 1");
-        return false;
-    }
-
-    if (out_pins[6]) {
-        Serial.println("From outPins[6]");
-        return true;
-    }
-
-    if (sum != 0) {
-        Serial.println("From sum != 0");
-        return false;
-    }
-
-    int sumPrev = 0;
-    for (auto x : prevSensor) {
-        sumPrev += x;
-    }
-
-    if (sumPrev == 0 && extremeTurnDirection == LEFT) {
-        Serial.println("From sumPrev == 0 && ...");
-        return true;
-    }
-
-    if (sumPrev > 2) {
-        Serial.println("From sumPrev > 2");
-        return false;
-    }
-
-    if (prevSensor[6] || prevSensor[5]) {
-        Serial.println("From prev || prev");
-        return true;
-    }
-
-    Serial.println("From defoult");
-    return false;
-}
-
-/*bool DirectionClass::is_left_turn_detected() {
-    bool detected_sensor_0 = false;
-    bool detected_sensor_2 = false;
-
+    auto currentTime = millis();
+    while (currentTime + maxTime > millis()) {
         read_sensor_pins();
 
-        if (out_pins[0] == HIGH) {
-            detected_sensor_0 = true;
-        }
-        if (out_pins[1] == HIGH) {
-            detected_sensor_2 = true;
-        }
+        int sum = arraySum(out_pins);
 
-        // Check if both sensors 0 and 2 are detected
-        if (detected_sensor_0 && detected_sensor_2) {
-            Serial.println("Left turn detected");
+        if (sum != 0 && sum != 7) {
             return true;
         }
+    }
 
     return false;
 }
-
-bool DirectionClass::is_right_turn_detected() {
-    bool detected_sensor_4 = false;
-    bool detected_sensor_6 = false;
-
-        read_sensor_pins();
-
-        if (out_pins[5] == HIGH) {
-            detected_sensor_4 = true;
-        }
-        if (out_pins[6] == HIGH) {
-            detected_sensor_6 = true;
-        }
-
-        // Check if both sensors 4 and 6 are detected
-        if (detected_sensor_4 && detected_sensor_6) {
-            Serial.println("Right turn detected");
-            return true;
-        }
-
-    return false;
-}*/
 
 void DirectionClass::execute_90_degree_turn(MotorController &motor_controller,
                                             float speed_adjust, int turn_time,
                                             unsigned long &last_detection_time,
                                             unsigned long cooldown_time) {
-    unsigned long current_time = millis();
+    auto current_time = millis();
 
     if (current_time - last_detection_time < cooldown_time) {
         Serial.println("Cooldown");
@@ -266,64 +134,19 @@ void DirectionClass::execute_90_degree_turn(MotorController &motor_controller,
 
     int back_time = 2000;
 
-    //motor_controller.motor_control_backward(150, speed_adjust);
-    //delay(500);
-
     if (left_detected || right_detected) {
         if (left_detected) {
             motor_controller.motor_control_backward(300, speed_adjust);
-
-            auto current_time = millis();
-            while (current_time + back_time > millis()) {
-                read_sensor_pins();
-
-                int as = 0;
-                for (auto x : out_pins) {
-                    as += x;
-                }
-
-                if (as != 0 && as != 7) {
-                    motor_controller.motor_control_forward(0, 0);
-                    last_detection_time = millis();
-                    return;
-                }
-            }
-
-            // delay(400);
-
+            waitForDetection(back_time);
             motor_controller.motor_control_left_turn(speed_adjust);
         } else {
             motor_controller.motor_control_backward(0, speed_adjust);
-
-            auto current_time = millis();
-            while (current_time + back_time > millis()) {
-                read_sensor_pins();
-
-                int as = 0;
-                for (auto x : out_pins) {
-                    as += x;
-                }
-
-                if (as != 0 && as != 7) {
-                    motor_controller.motor_control_forward(0, 0);
-                    last_detection_time = millis();
-                    return;
-                }
-            }
-
-            //delay(400);
-
+            waitForDetection(back_time);
             motor_controller.motor_control_right_turn(speed_adjust);
         }
 
-        auto current_time = millis();
-        while (current_time + turn_time > millis()) {
-            get_direction();
-        }
+        waitForDetection(turn_time);
 
-        //delay(turn_time);
-
-        motor_controller.motor_control_forward(0, 0);
     }
 
     last_detection_time = millis();
