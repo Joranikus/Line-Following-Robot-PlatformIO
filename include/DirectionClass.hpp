@@ -23,9 +23,6 @@ public:
 
 private:
 
-    bool is_left_turn_detected();
-    bool is_right_turn_detected();
-
     static int arraySum(std::array<short, 7> &pins);
     double this_direction();
     void read_sensor_pins();
@@ -38,7 +35,6 @@ private:
 
     double prev_direction = 0.0;
     int nullSensorIters = 0;
-
     bool waitForDetection(int maxTime);
 };
 
