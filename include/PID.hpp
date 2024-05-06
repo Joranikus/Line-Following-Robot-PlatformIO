@@ -1,6 +1,3 @@
-//
-// Created by Øystein Bringsli.
-//
 
 #ifndef LINE_FOLLOWING_ROBOT_PLATFORMIO_PID_HPP
 #define LINE_FOLLOWING_ROBOT_PLATFORMIO_PID_HPP
