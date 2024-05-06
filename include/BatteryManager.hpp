@@ -2,6 +2,12 @@
 #ifndef LINE_FOLLOWING_ROBOT_PLATFORMIO_BATTERYMANAGER_HPP
 #define LINE_FOLLOWING_ROBOT_PLATFORMIO_BATTERYMANAGER_HPP
 
+enum Batterystate {
+    GREEN,
+    YELLOW,
+    RED
+};
+
 class BatteryManager {
 
 public:
@@ -21,6 +27,9 @@ private:
     int red_led_pin;
     int voltage_pin;
     float battery_voltage;
+
+    Batterystate getBatteryState();
+    Batterystate prevState;
 
     bool green_led_status;
     bool yellow_led_status;

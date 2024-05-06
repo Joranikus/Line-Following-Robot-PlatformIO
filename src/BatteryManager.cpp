@@ -7,6 +7,7 @@ BatteryManager::BatteryManager(int yellow_led_pin, int green_led_pin, int red_le
     pinMode(yellow_led_pin, OUTPUT);
     pinMode(green_led_pin, OUTPUT);
     pinMode(red_led_pin, OUTPUT);
+    prevState = getBatteryState();
 }
 
 void BatteryManager::update() {
@@ -37,7 +38,17 @@ bool BatteryManager::shutdown_status() {
     }
 }
 
+Batterystate BatteryManager::getBatteryState() {
+    if (battery_voltage <= red_threshold) {return RED;}
+    else if (battery_voltage <= yellow_threshold) {return YELLOW;}
+    else {return GREEN;}
+}
+
 void BatteryManager::update_LEDs() {
+    auto state = getBatteryState();
+    if (state == prevState) {return;}
+    else {prevState = state;}
+
     if (battery_voltage <= red_threshold) {
         shutdown = true;
         digitalWrite(red_led_pin, 1);
