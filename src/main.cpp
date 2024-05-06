@@ -8,6 +8,7 @@
 #include "PID.hpp"
 #include "Tests.hpp"
 #include "BatteryManager.hpp"
+#include "TimerStats.hpp"
 
 const int num_sensor_pins = 7;
 std::array<short, num_sensor_pins> sensor_pins = {{17, 16, 5, 18, 21, 22, 23}};
@@ -31,6 +32,7 @@ int turn_time = 0;
 static unsigned long last_time = 0;
 
 Tests tests;
+TimerStats timer;
 BatteryManager battery_manager{yellow_light_pin, green_led_pin, red_led_pin, voltage_pin};
 
 void setup()
@@ -58,11 +60,16 @@ void setup()
         delay(100);
     }
 
-    Serial.println("Wifi connected.");
-    ArduinoOTA.begin();
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("Wifi connected.");
+        ArduinoOTA.begin();
 
-    Serial.print("IP: ");
-    Serial.println(WiFi.localIP());
+        Serial.print("IP: ");
+        Serial.println(WiFi.localIP());
+    } else {
+        Serial.println("Failed to connect to wifi.");
+    }
+
 }
 
 void loop()
@@ -85,7 +92,7 @@ void loop()
     auto dir_without_pid = direction_class.get_direction();
     direction_class.updateExtremeTurn();
 
-    auto dir = 0;
+    auto dir = 0.0;
     if (direction_class.extremeTurnActive) {
         direction_class.execute_90_degree_turn(motor_controller, speed_adjust_90, turn_time, last_detection_time, cooldown_time);
         direction_class.extremeTurnActive = false;
@@ -93,18 +100,12 @@ void loop()
         dir = MotorController::clamp(pid.output(dir_without_pid, dt), 0, 300);
         motor_controller.motor_control_forward(dir, pid_speed_adjust);
     }
-    //auto pid_output = pid.output(dir_without_pid, dt);
-    //auto dir = MotorController::clamp(pid_output, 0, 300);
-
-//    Serial.print(dir_without_pid);
-//    Serial.print(" | ");
-//    Serial.println(dir);
-
-    //motor_controller.motor_control_forward(dir, pid_speed_adjust);
 
     /////////////////////// TESTS ///////////////////////
 
-    tests.print_motor_speed(motor_controller, dir_without_pid, dir, 100);
+    //timer.startTimer();
+
+    //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 100);
 
     //tests.print_sensors(sensor_pins, num_sensor_pins, 500);
 
