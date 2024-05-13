@@ -6,9 +6,8 @@ TimerStats::TimerStats(): prevTime(millis()) {}
 
 void TimerStats::startTimer() {
     iters++;
-    printIters++;
 
-    if (iters % updateFreq == 0) {
+    if (iters == updateFreq) {
         estimatedLoopTime /* (milliseconds) */ = static_cast<double>(millis() - prevTime) / static_cast<double>(updateFreq);
         loopsPerTimeunit  /* (loops per second) */ = static_cast<long>(1000.0 / estimatedLoopTime);
         distancePerLoop   /* (millimeters) */ = estimatedLoopTime * maxSpeed;

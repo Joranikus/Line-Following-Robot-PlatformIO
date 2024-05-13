@@ -16,7 +16,6 @@ public:
     void startTimer();
     void printTimerData() const;
 
-    unsigned long long printIters = 0;
     int updateFreq = 1000;
     static constexpr double maxSpeed = 4.0; // Extremely optimistic top speed (m/s)
 
