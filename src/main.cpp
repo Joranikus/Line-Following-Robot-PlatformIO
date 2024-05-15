@@ -75,11 +75,13 @@ void setup()
 void loop()
 {
 
+    if (WiFi.status() == WL_CONNECTED) {
+        ArduinoOTA.handle();
+    }
+
     unsigned long current_time = micros();
     double dt = current_time - last_time;
     last_time = current_time;
-
-    ArduinoOTA.handle();
 
     if (!battery_manager.shutdown_status()) {
         battery_manager.update();
@@ -103,7 +105,7 @@ void loop()
 
     /////////////////////// TESTS ///////////////////////
 
-    //timer.startTimer();
+    // timer.startTimer();
 
     //tests.print_motor_speed(motor_controller, dir_without_pid, dir, 100);
 
